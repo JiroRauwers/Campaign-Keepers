@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Globe, Plus } from "lucide-react";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import { Tables } from "@/database.types";
 
 interface KnownWorldsProps {
-  worlds: Tables[];
+  worlds: Tables<"worlds">[];
 }
 
 export function KnownWorlds({ worlds }: KnownWorldsProps) {
@@ -30,10 +31,10 @@ export function KnownWorlds({ worlds }: KnownWorldsProps) {
         </Button>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-wrap  gap-4">
           {worlds.map((world) => (
             <Card
-              key={world.id}
+              key={world.world_id}
               className="group bg-background flex flex-col border-border hover:bg-accent hover:cursor-pointer"
               onClick={() => {
                 router.push(`/world/${world.world_id}`);
@@ -60,6 +61,20 @@ export function KnownWorlds({ worlds }: KnownWorldsProps) {
               </CardContent>
             </Card>
           ))}
+          {worlds.length === 0 && (
+            <div className="flex w-full flex-col items-center justify-center h-full gap-4">
+              <p className="text-sm text-muted-foreground">
+                No worlds found. Create one to get started!
+              </p>
+              <Button
+                onClick={() => {
+                  router.push("/world/create");
+                }}
+              >
+                Create World
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

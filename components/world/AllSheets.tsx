@@ -21,15 +21,10 @@ import {
 import { User, LayoutGrid, List } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-interface CharacterSheet {
-  name: string;
-  player: string | null;
-  class: string;
-  level: number;
-}
+import { Tables } from "@/database.types";
 
 interface AllSheetsProps {
-  sheets: CharacterSheet[];
+  sheets: Tables<"sheets">[];
 }
 
 export function AllSheets({ sheets }: AllSheetsProps) {
@@ -39,13 +34,13 @@ export function AllSheets({ sheets }: AllSheetsProps) {
 
   const filteredSheets = sheets
     .filter((sheet) =>
-      sheet.name.toLowerCase().includes(searchTerm.toLowerCase())
+      sheet.character_name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter(
       (sheet) =>
         filter === "all" ||
-        (filter === "assigned" && sheet.player) ||
-        (filter === "unassigned" && !sheet.player)
+        (filter === "assigned" && sheet.player_name) ||
+        (filter === "unassigned" && !sheet.player_name)
     );
 
   return (
@@ -106,30 +101,32 @@ export function AllSheets({ sheets }: AllSheetsProps) {
                 className={cn(
                   "flex group select-none flex-col bg-background overflow-hidden",
                   "border border-border rounded-lg aspect-square shadow hover:bg-muted/50 transition-colors cursor-pointer",
-                  sheet.player ? "" : "opacity-50 hover:opacity-100"
+                  sheet.player_name ? "" : "opacity-50 hover:opacity-100"
                 )}
               >
                 <div className="flex-1 w-full relative">
                   <Image
-                    src={`https://picsum.photos/seed/${sheet.class}/200`}
-                    alt={sheet.class}
+                    src={`https://picsum.photos/seed/${sheet.character_name}/200`}
+                    alt={sheet.character_name}
                     fill
                     className="object-cover group-hover:scale-105 transition-all duration-300"
                   />
                 </div>
                 <div className="flex flex-col px-3 pt-2 pb-2">
-                  <div className="font-medium truncate">{sheet.name}</div>
+                  <div className="font-medium truncate">
+                    {sheet.character_name}
+                  </div>
                   <div
                     className={cn(
                       "text-sm text-muted-foreground truncate",
-                      sheet.player ? "" : "text-transparent"
+                      sheet.player_name ? "" : "text-transparent"
                     )}
                   >
-                    {sheet.player ? `Player: ${sheet.player}` : "Unassigned"}
+                    {sheet.player_name ? sheet.player_name : "Unassigned"}
                   </div>
-                  <div className="text-sm text-muted-foreground truncate">
+                  {/* <div className="text-sm text-muted-foreground truncate">
                     {sheet.class} - Level {sheet.level}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ))}
@@ -141,17 +138,15 @@ export function AllSheets({ sheets }: AllSheetsProps) {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Player</TableHead>
-                  <TableHead>Class</TableHead>
-                  <TableHead>Level</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredSheets.map((sheet, index) => (
                   <TableRow key={index}>
-                    <TableCell className="font-medium">{sheet.name}</TableCell>
-                    <TableCell>{sheet.player || "Unassigned"}</TableCell>
-                    <TableCell>{sheet.class}</TableCell>
-                    <TableCell>{sheet.level}</TableCell>
+                    <TableCell className="font-medium">
+                      {sheet.character_name}
+                    </TableCell>
+                    <TableCell>{sheet.player_name || "Unassigned"}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

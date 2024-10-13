@@ -64,7 +64,9 @@ export default async function AuthButton() {
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href={`/protected/account`}>Profile</Link>
+          </DropdownMenuItem>
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <form action={signOutAction}>
             <DropdownMenuItem asChild>

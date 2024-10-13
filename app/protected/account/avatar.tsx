@@ -79,7 +79,7 @@ export default function UserAvatar({
         }}
       >
         <AvatarImage src={avatarUrl ?? ""} alt="Avatar" />
-        <AvatarFallback className="avatar no-image" />
+        <AvatarFallback className="avatar no-image">No image</AvatarFallback>
       </Avatar>
 
       <Input

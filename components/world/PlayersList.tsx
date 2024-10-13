@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User } from "lucide-react";
+import { Tables } from "@/database.types";
 
 interface Player {
   name: string;
@@ -12,7 +13,7 @@ interface Player {
 }
 
 interface PlayersListProps {
-  players: Player[];
+  players: Tables<"profiles">[];
 }
 
 export function PlayersList({ players }: PlayersListProps) {
@@ -35,17 +36,20 @@ export function PlayersList({ players }: PlayersListProps) {
             <div key={index} className="flex items-start gap-x-3">
               <div className="relative">
                 <Avatar className="w-10 h-10 border border-border">
-                  <AvatarImage src={player.avatar} alt={player.name} />
-                  <AvatarFallback>{player.name[0]}</AvatarFallback>
+                  <AvatarImage
+                    src={player.avatar_url ?? ""}
+                    alt={player.username ?? ""}
+                  />
+                  <AvatarFallback>{player.username?.[0] ?? ""}</AvatarFallback>
                 </Avatar>
-                {player.online && (
+                {Math.random() > 0.5 && (
                   <span className="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-400 ring-1 ring-white" />
                 )}
               </div>
               <div>
-                <div className="font-medium">{player.name}</div>
+                <div className="font-medium">{player.username}</div>
                 <div className="text-sm text-muted-foreground">
-                  {player.characters.join(", ")}
+                  {player.full_name}
                 </div>
               </div>
             </div>

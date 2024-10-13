@@ -76,10 +76,8 @@ export async function UniverseDashboard() {
   } = await supabase.auth.getUser();
 
   const { data: knownWorlds, ...res } = await supabase
-    .rpc("get_accessible_worlds", {
-      id_user: user?.id!,
-    })
-    .select(`*`);
+    .from("worlds")
+    .select("*");
 
   return (
     <div>
