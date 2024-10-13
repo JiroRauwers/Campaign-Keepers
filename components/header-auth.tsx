@@ -4,11 +4,18 @@ import Link from "next/link";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { createClient } from "@/utils/supabase/server";
+import { getUserProfile } from "@/lib/getUserProfile";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 export default async function AuthButton() {
-  const {
-    data: { user },
-  } = await createClient().auth.getUser();
+  const user = await getUserProfile();
 
   if (!hasEnvVars) {
     return (
@@ -48,12 +55,24 @@ export default async function AuthButton() {
   }
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
-      <form action={signOutAction}>
-        <Button type="submit" variant={"outline"}>
-          Sign out
-        </Button>
-      </form>
+      <span className="hidden md:block">{user.username}</span>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Avatar className="w-8 h-8">
+            <AvatarImage src={user.avatar_url ?? ""} />
+            <AvatarFallback>{user.username?.[0]}</AvatarFallback>
+          </Avatar>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
+          <form action={signOutAction}>
+            <DropdownMenuItem asChild>
+              <button type="submit">Sign out</button>
+            </DropdownMenuItem>
+          </form>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   ) : (
     <div className="flex gap-2">
