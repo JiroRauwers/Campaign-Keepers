@@ -1,0 +1,70 @@
+.columnsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .columnsContainer {
+    flex-direction: row;
+  }
+}
+
+.sheetColumn {
+  --gutter-size: 1rem;
+  --gutters: 3;
+  flex: 1;
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .sheetColumn.sm { width: 25%; }
+  .sheetColumn.md { width: 33.333%; }
+  .sheetColumn.lg { width: 41.666%; }
+}
+
+.gridContainer {
+  display: grid;
+  gap: var(--gutter-size);
+}
+
+.sheetColumn.sm {
+  --columns: 1;
+}
+
+.sheetColumn.md {
+  --columns: 2;
+}
+
+.sheetColumn.lg {
+  --columns: 3;
+}
+
+.gridContainer {
+  grid-template-columns: repeat(
+    var(--columns),
+    calc(
+      100% / var(--columns) - var(--gutter-size) * var(--gutters) /
+        var(--columns)
+    )
+  );
+  grid-auto-rows: calc(
+    100% / var(--columns) - var(--gutter-size) * var(--gutters) /
+      var(--columns)
+  );
+}
+
+.gridItem {
+  background-color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.colSpan1 { grid-column: span 1; }
+.colSpan2 { grid-column: span 2; }
+.colSpan3 { grid-column: span 3; }
+
+.rowSpan1 { grid-row: span 1; }
+.rowSpan2 { grid-row: span 2; }
+.rowSpan3 { grid-row: span 3; }

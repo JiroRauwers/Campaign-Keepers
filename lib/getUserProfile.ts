@@ -1,4 +1,6 @@
+import { Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
+import assert from "assert";
 
 export const getUserProfile = async () => {
   const supabase = createClient();
@@ -13,9 +15,15 @@ export const getUserProfile = async () => {
     .eq("id", user?.id!)
     .single();
 
+  if (error) throw error;
+  assert(data, "User not found");
+
   const avatar_url = await supabase.storage
     .from("avatars")
-    .getPublicUrl(data?.avatar_url ?? "");
+    .createSignedUrl(data?.avatar_url ?? "", 60);
 
-  return { ...data, avatar_url: avatar_url.data.publicUrl };
+  return {
+    ...data,
+    avatar_url: avatar_url.data?.signedUrl,
+  } as Tables<"profiles"> | null;
 };

@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tables } from "@/database.types";
 
 interface CharacterSheet {
   name: string;
@@ -9,10 +10,10 @@ interface CharacterSheet {
 }
 
 interface CharacterSheetsProps {
-  characterSheets: CharacterSheet[];
+  sheets: (Tables<"sheets"> & { profiles: Tables<"profiles">[] })[];
 }
 
-export function CharacterSheets({ characterSheets }: CharacterSheetsProps) {
+export function CharacterSheets({ sheets = [] }: CharacterSheetsProps) {
   return (
     <Card>
       <CardHeader>
@@ -20,15 +21,20 @@ export function CharacterSheets({ characterSheets }: CharacterSheetsProps) {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {characterSheets.map((sheet) => (
-            <li key={sheet.name} className="flex items-center justify-between">
+          {sheets.map((sheet) => (
+            <li
+              key={sheet.sheet_id}
+              className="flex items-center justify-between"
+            >
               <div>
-                <p className="text-sm font-medium">{sheet.name}</p>
-                <p className="text-xs text-muted-foreground">{sheet.player}</p>
+                <p className="text-sm font-medium">{sheet.character_name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {sheet.profiles.map((p) => p.username).join(", ") ||
+                    "Unassigned"}
+                </p>
               </div>
               <div className="flex items-center space-x-2">
-                <Badge variant="outline">{sheet.class}</Badge>
-                <Badge variant={"secondary"}>Lvl {sheet.level}</Badge>
+                <Badge variant="outline">{sheet.type}</Badge>
               </div>
             </li>
           ))}

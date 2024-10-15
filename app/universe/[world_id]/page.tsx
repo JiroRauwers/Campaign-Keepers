@@ -1,6 +1,6 @@
 import { AllSheets } from "@/components/world/AllSheets";
 import { CampaignsList } from "@/components/world/CampaignsList";
-import { PlayersList } from "@/components/world/PlayersList";
+import { PlayersList } from "@/components/PlayersList";
 import { WorldJournal } from "@/components/world/WorldJournal";
 import { WorldOverview } from "@/components/world/WorldOverview";
 import { createClient } from "@/utils/supabase/server";
@@ -17,6 +17,8 @@ import {
 import { Tables } from "@/database.types";
 import { FloatingSessionViewer } from "@/components/FloatingSessionViewer";
 import { assert } from "console";
+import { notFound } from "next/navigation";
+import { PageBase } from "@/components/PageBase";
 
 export async function generateMetadata({
   params,
@@ -46,7 +48,7 @@ export default async function WorldPage({
     .single();
 
   if (worldError) {
-    return <div>Error: {worldError.message}</div>;
+    notFound();
   }
   assert(world, "World not found");
 
@@ -63,7 +65,7 @@ export default async function WorldPage({
   );
 
   return (
-    <>
+    <PageBase>
       <FloatingSessionViewer data={{ res: profiles, wp: world.user_world }} />
       <Head>
         <title>{world?.name}</title>
@@ -95,7 +97,7 @@ export default async function WorldPage({
           <AllSheets sheets={world.sheets} />
         </div>
       </div>
-    </>
+    </PageBase>
   );
 }
 

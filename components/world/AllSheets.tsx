@@ -94,12 +94,12 @@ export function AllSheets({ sheets }: AllSheetsProps) {
           </div>
         </div>
         {view === "card" ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex flex-wrap gap-4">
             {filteredSheets.map((sheet, index) => (
               <div
                 key={index}
                 className={cn(
-                  "flex group select-none flex-col bg-background overflow-hidden",
+                  "flex flex-1 group select-none flex-col bg-background overflow-hidden",
                   "border border-border rounded-lg aspect-square shadow hover:bg-muted/50 transition-colors cursor-pointer",
                   sheet.player_name ? "" : "opacity-50 hover:opacity-100"
                 )}

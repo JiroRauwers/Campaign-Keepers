@@ -14,13 +14,13 @@ export function FloatingSessionViewer({ data }: { data: any }) {
     <>
       <Button
         onClick={toggleModal}
-        className="fixed bottom-4 right-4 rounded-full w-12 h-12 bg-primary hover:bg-primary/80 text-white shadow-lg"
+        className="fixed bottom-4 right-4 rounded-full w-12 z-10 h-12 bg-primary hover:bg-primary/80 text-white shadow-lg"
       >
         <User className="w-6 h-6" />
       </Button>
       {isOpen && (
         <div className="fixed inset-0 bg-background/50 flex items-center justify-center z-50">
-          <Card className="bg-background text-foreground border-border w-full max-w-md max-h-[80vh] overflow-auto">
+          <Card className="bg-background/10 text-foreground border-border w-full max-w-md max-h-[80vh] overflow-auto">
             <CardHeader>
               <CardTitle className="text-xl text-primary flex items-center justify-between">
                 Some data

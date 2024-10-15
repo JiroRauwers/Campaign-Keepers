@@ -1,4 +1,5 @@
 import { FloatingSessionViewer } from "@/components/FloatingSessionViewer";
+import { PageBase } from "@/components/PageBase";
 import { KnownWorlds } from "@/components/universe/KnownWorlds";
 import { RecentActivity } from "@/components/universe/RecentActivity";
 import { UniverseInfo } from "@/components/universe/UniverseInfo";
@@ -71,16 +72,13 @@ export async function UniverseDashboard() {
   ];
 
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   const { data: knownWorlds, ...res } = await supabase
     .from("worlds")
     .select("*");
 
   return (
-    <div>
+    <PageBase>
       <FloatingSessionViewer data={{ res }} />
       <h1 className="text-4xl font-bold text-primary mb-8">
         Universe Dashboard
@@ -95,7 +93,7 @@ export async function UniverseDashboard() {
           <RecentActivity activities={recentActivities} />
         </div>
       </div>
-    </div>
+    </PageBase>
   );
 }
 

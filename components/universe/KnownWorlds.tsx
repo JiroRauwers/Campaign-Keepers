@@ -37,7 +37,7 @@ export function KnownWorlds({ worlds }: KnownWorldsProps) {
               key={world.world_id}
               className="group bg-background flex flex-col border-border hover:bg-accent hover:cursor-pointer"
               onClick={() => {
-                router.push(`/world/${world.world_id}`);
+                router.push(`/universe/${world.world_id}`);
               }}
             >
               <CardHeader className="pb-2">

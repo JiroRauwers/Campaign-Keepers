@@ -24,6 +24,7 @@ import { createClient } from "@/utils/supabase/client";
 import { concat, conditional, filter, map, pipe, piped } from "remeda";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface CampaignsListProps {
   campaigns: Tables<"campaigns">[];
@@ -56,8 +57,6 @@ export function CampaignsList({
           table: "campaigns",
         },
         (payload) => {
-          console.log("Change received!", payload);
-
           switch (payload.eventType) {
             case "UPDATE":
               toast.info(`Campaign ${payload.new.name} updated`, {
@@ -184,8 +183,11 @@ export function CampaignsList({
                   variant="outline"
                   className="hover:bg-primary"
                   size="sm"
+                  asChild
                 >
-                  View
+                  <Link href={`/universe/${worldId}/${campaign.campaign_id}`}>
+                    View
+                  </Link>
                 </Button>
               </div>
             </div>
