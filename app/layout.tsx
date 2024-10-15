@@ -34,7 +34,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NavbarSSR />
+          {/* <NavbarSSR /> */}
           {children}
           {modal}
           <footer className="w-full backdrop-blur-sm flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
