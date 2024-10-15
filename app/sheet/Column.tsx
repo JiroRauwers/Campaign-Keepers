@@ -30,7 +30,7 @@ export function Column({ id, columnSize, items }: ColumnProps) {
     >
       {items.map((item, index) => (
         <Item key={item.id} {...{ ...item, index }} column={id} />
-      ))}{" "}
+      ))}
     </div>
   );
 }

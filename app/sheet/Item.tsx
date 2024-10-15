@@ -1,21 +1,12 @@
-import { Button } from "@/components/ui/button";
-
 import { cn } from "@/lib/utils";
-import { useSensor, useSensors } from "@dnd-kit/core";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { useSortable } from "@dnd-kit/react/sortable";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
+import { CollisionPriority } from "@dnd-kit/abstract";
 
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
   ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuRadioGroup,
-  ContextMenuRadioItem,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
@@ -49,65 +40,62 @@ export function Item({
       duration: 300,
       easing: "ease-in-out",
     },
+    collisionPriority: CollisionPriority.Highest,
     accept: "item",
     group: column,
     feedback: "clone",
+    data: settings,
   });
 
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <Button
+        <div
           ref={ref}
           className={cn(
-            "sheet-item",
-            "w-auto h-auto",
+            "sheet-item bg-card rounded-md p-3 border",
             `col-${settings.colSpan}`,
             `row-${settings.rowSpan}`
           )}
         >
           {id}
-        </Button>
+        </div>
       </ContextMenuTrigger>
       <ContextMenuContent className="w-64">
         <ContextMenuSub>
           <ContextMenuSubTrigger inset>Col span</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
-            <ContextMenuItem
-              onClick={() => setSettings({ ...settings, colSpan: "sm" })}
-            >
-              sm
-            </ContextMenuItem>
-            <ContextMenuItem
-              onClick={() => setSettings({ ...settings, colSpan: "md" })}
-            >
-              md
-            </ContextMenuItem>
-            <ContextMenuItem
-              onClick={() => setSettings({ ...settings, colSpan: "lg" })}
-            >
-              lg
-            </ContextMenuItem>
+            {["sm", "md", "lg"].map((colSpan) => (
+              <ContextMenuCheckboxItem
+                key={colSpan}
+                checked={settings.colSpan === colSpan}
+                children={colSpan}
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    colSpan: colSpan as "sm" | "md" | "lg",
+                  })
+                }
+              />
+            ))}
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSub>
           <ContextMenuSubTrigger inset>Row span</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
-            <ContextMenuItem
-              onClick={() => setSettings({ ...settings, rowSpan: "sm" })}
-            >
-              sm
-            </ContextMenuItem>
-            <ContextMenuItem
-              onClick={() => setSettings({ ...settings, rowSpan: "md" })}
-            >
-              md
-            </ContextMenuItem>
-            <ContextMenuItem
-              onClick={() => setSettings({ ...settings, rowSpan: "lg" })}
-            >
-              lg
-            </ContextMenuItem>
+            {["sm", "md", "lg"].map((rowSpan) => (
+              <ContextMenuCheckboxItem
+                key={rowSpan}
+                checked={settings.rowSpan === rowSpan}
+                children={rowSpan}
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    rowSpan: rowSpan as "sm" | "md" | "lg",
+                  })
+                }
+              />
+            ))}
           </ContextMenuSubContent>
         </ContextMenuSub>
       </ContextMenuContent>

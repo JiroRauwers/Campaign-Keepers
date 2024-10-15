@@ -47,7 +47,7 @@ interface CampaignDashboardProps {
   npcs: NPC[];
 }
 
-export async function CampaignPage({
+export default async function CampaignPage({
   params: { campaign_id },
 }: {
   params: { campaign_id: string };
@@ -232,4 +232,3 @@ export async function CampaignPage({
   );
 }
 
-export default CampaignPage;

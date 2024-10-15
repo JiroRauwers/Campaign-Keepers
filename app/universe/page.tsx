@@ -6,7 +6,7 @@ import { UniverseInfo } from "@/components/universe/UniverseInfo";
 import { UpcomingSessions } from "@/components/universe/UpcomingSessions";
 import { createClient } from "@/utils/supabase/server";
 
-export async function UniverseDashboard() {
+export default async function UniverseDashboard() {
   const universeInfo = {
     name: "Aethoria",
     description:
@@ -96,5 +96,3 @@ export async function UniverseDashboard() {
     </PageBase>
   );
 }
-
-export default UniverseDashboard;

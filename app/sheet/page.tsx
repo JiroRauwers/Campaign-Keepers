@@ -29,6 +29,7 @@ export default function Sheet() {
       {items.map((column) => {
         return <Column key={column.id} {...column} />;
       })}
+      <div className="bg-red-300 p-4">asd</div>
     </div>
   );
 }
