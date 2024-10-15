@@ -1,22 +1,20 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { type User } from "@supabase/supabase-js";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "./avatar";
 import { toast } from "sonner";
+import { Tables } from "@/database.types";
 
-// ...
-
-export default function AccountForm({ user }: { user: User | null }) {
+export default function AccountForm({ user }: { user: Tables<"profiles"> }) {
   const supabase = createClient();
   const [loading, setLoading] = useState(true);
-  const [fullname, setFullname] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-  const [website, setWebsite] = useState<string | null>(null);
-  const [avatar_url, setAvatarUrl] = useState<string | null>(null);
+  const [fullname, setFullname] = useState<string | null>(user.full_name);
+  const [username, setUsername] = useState<string | null>(user.username);
+  const [website, setWebsite] = useState<string | null>(user.website);
+  const [avatar_url, setAvatarUrl] = useState<string | null>(user.avatar_url);
 
   const getProfile = useCallback(async () => {
     try {
@@ -93,11 +91,7 @@ export default function AccountForm({ user }: { user: User | null }) {
       />
 
       <div>
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="text" value={user?.email} disabled />
-      </div>
-      <div>
-        <Label htmlFor="fullName">Full Name</Label>
+        <Label htmlFor="fullName">Name</Label>
         <Input
           id="fullName"
           type="text"

@@ -6,6 +6,8 @@ import { UniverseInfo } from "@/components/universe/UniverseInfo";
 import { UpcomingSessions } from "@/components/universe/UpcomingSessions";
 import { createClient } from "@/utils/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 export default async function UniverseDashboard() {
   const universeInfo = {
     name: "Aethoria",

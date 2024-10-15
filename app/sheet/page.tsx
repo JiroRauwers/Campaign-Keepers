@@ -1,10 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Column, ColumnProps } from "./Column";
-import { Item } from "./Item";
-import { DragDropProvider } from "@dnd-kit/react";
-import { move } from "@dnd-kit/helpers";
-import { useSensor, useSensors } from "@dnd-kit/core";
+  
+export const dynamic = "force-dynamic";
 
 export default function Sheet() {
   const [items, setItems] = useState<ColumnProps[]>([

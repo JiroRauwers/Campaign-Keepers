@@ -1,12 +1,16 @@
+import { getUserProfile } from "@/lib/getUserProfile";
 import AccountForm from "./form";
-import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import assert from "assert";
+
+export const dynamic = "force-dynamic";
 
 export default async function Account() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUserProfile();
+  if (!user) {
+    redirect("/sign-in");
+  }
+  assert(user, "User must be defined here");
 
   return <AccountForm user={user} />;
 }

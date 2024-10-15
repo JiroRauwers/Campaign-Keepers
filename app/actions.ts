@@ -6,7 +6,6 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export const signUpAction = async (formData: FormData) => {
-  "use server";
   const email = formData.get("email")?.toString();
   const password = formData.get("password")?.toString();
   const supabase = createClient();
@@ -37,7 +36,6 @@ export const signUpAction = async (formData: FormData) => {
 };
 
 export const signInAction = async (formData: FormData) => {
-  "use server";
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = createClient();
@@ -55,7 +53,6 @@ export const signInAction = async (formData: FormData) => {
 };
 
 export const forgotPasswordAction = async (formData: FormData) => {
-  "use server";
   const email = formData.get("email")?.toString();
   const supabase = createClient();
   const origin = headers().get("origin");
@@ -90,7 +87,6 @@ export const forgotPasswordAction = async (formData: FormData) => {
 };
 
 export const resetPasswordAction = async (formData: FormData) => {
-  "use server";
   const supabase = createClient();
 
   const password = formData.get("password") as string;
@@ -128,7 +124,6 @@ export const resetPasswordAction = async (formData: FormData) => {
 };
 
 export const signOutAction = async () => {
-  "use server";
   const supabase = createClient();
   await supabase.auth.signOut();
   return redirect("/sign-in");

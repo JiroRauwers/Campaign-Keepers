@@ -2,6 +2,10 @@ import { Database } from "@/database.types";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+import "server-only";
+
+export const dynamic = "force-dynamic";
+
 export const createClient = () => {
   const cookieStore = cookies();
 

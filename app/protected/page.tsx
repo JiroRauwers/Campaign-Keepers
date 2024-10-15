@@ -1,18 +1,11 @@
 import FetchDataSteps from "@/components/tutorial/fetch-data-steps";
-import { createClient } from "@/utils/supabase/server";
+import { getUserProfile } from "@/lib/getUserProfile";
 import { InfoIcon } from "lucide-react";
-import { redirect } from "next/navigation";
+
+export const dynamic = "force-dynamic";
 
 export default async function ProtectedPage() {
-  const supabase = createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return redirect("/sign-in");
-  }
+  const user = await getUserProfile();
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">

@@ -2,6 +2,8 @@ import { Tables } from "@/database.types";
 import { createClient } from "@/utils/supabase/server";
 import assert from "assert";
 
+export const dynamic = "force-dynamic";
+
 export const getUserProfile = async () => {
   const supabase = createClient();
 
