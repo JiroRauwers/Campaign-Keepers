@@ -5,7 +5,6 @@ import Link from "next/link";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { NavbarSSR } from "@/components/navabar/ssr";
-import StarField from "@/components/Starfield";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
