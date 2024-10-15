@@ -15,7 +15,7 @@ export const getUserProfile = async () => {
     .eq("id", user?.id!)
     .single();
 
-  if (error) throw error;
+  if (error) throw new Error("User not found", { cause: error });
   assert(data, "User not found");
 
   const avatar_url = await supabase.storage

@@ -13,10 +13,10 @@ import {
 } from "../ui/dropdown-menu";
 import { Tables } from "@/database.types";
 
-export function HeaderAuth({ user }: { user: Tables<"profiles"> | null }) {
+export function HeaderAuth({ user }: { user: Tables<"profiles"> }) {
   return (
     <>
-      {!user && (
+      {/* {user && (
         <div className="flex w-fit flex-1 justify-end">
           <Badge
             variant={"default"}
@@ -45,38 +45,36 @@ export function HeaderAuth({ user }: { user: Tables<"profiles"> | null }) {
             </Button>
           </div>
         </div>
-      )}
-      {user && (
-        <div className="flex w-fit flex-1 justify-end">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="hover:bg-transparent gap-1 px-0 pl-2"
-              >
-                <span>{user.username}</span>
-                <span className="sr-only">Open user menu</span>
-                <Avatar className="w-8 h-8">
-                  <AvatarImage src={user.avatar_url ?? ""} />
-                  <AvatarFallback>{user.username?.[0]}</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+      )} */}
+      <div className="flex w-fit flex-1 justify-end">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hover:bg-transparent gap-1 px-0 pl-2"
+            >
+              <span>{user.username}</span>
+              <span className="sr-only">Open user menu</span>
+              <Avatar className="w-8 h-8">
+                <AvatarImage src={user.avatar_url ?? ""} />
+                <AvatarFallback>{user.username?.[0]}</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Link href={`/protected/account`}>Profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <form action={signOutAction}>
               <DropdownMenuItem asChild>
-                <Link href={`/protected/account`}>Profile</Link>
+                <button type="submit">Sign out</button>
               </DropdownMenuItem>
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <form action={signOutAction}>
-                <DropdownMenuItem asChild>
-                  <button type="submit">Sign out</button>
-                </DropdownMenuItem>
-              </form>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      )}
+            </form>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </>
   );
 }

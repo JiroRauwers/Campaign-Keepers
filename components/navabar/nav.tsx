@@ -15,7 +15,7 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
 
-export function Navbar({ user }: { user: Tables<"profiles"> | null }) {
+export function Navbar({ user }: { user: Tables<"profiles"> }) {
   const pathname = usePathname();
 
   const breadcrumbs = useMemo(
