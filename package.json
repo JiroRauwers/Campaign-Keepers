@@ -26,6 +26,7 @@
     "@radix-ui/react-tooltip": "^1.1.3",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@vercel/flags": "^2.6.1",
     "autoprefixer": "10.4.17",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",

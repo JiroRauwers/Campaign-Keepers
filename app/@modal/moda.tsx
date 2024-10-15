@@ -27,7 +27,7 @@ export function Modal({ children }: { children: React.ReactNode }) {
           <button onClick={onDismiss} className="close-button" />
         </dialog>
       </div>,
-      document.getElementById("modal-root")!
+      document?.getElementById("modal-root")!
     );
     return portal;
   } catch (error) {

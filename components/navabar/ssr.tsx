@@ -1,3 +1,4 @@
+"use server";
 import { getUserProfile } from "@/lib/getUserProfile";
 import { Navbar } from "./nav";
 
@@ -12,5 +13,4 @@ export async function NavbarSSR() {
     console.error(error);
     return null;
   }
-
 }
