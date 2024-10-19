@@ -1,6 +1,5 @@
 import React from "react";
 import { useDroppable } from "@dnd-kit/react";
-import { CollisionPriority } from "@dnd-kit/abstract";
 import { cn } from "@/lib/utils";
 import { Item, ItemProps } from "./Item";
 import "./sheet.css";
@@ -16,7 +15,6 @@ export function Column({ id, columnSize, items }: ColumnProps) {
     id,
     type: "column",
     accept: "item",
-    collisionPriority: CollisionPriority.Low,
   });
 
   return (
