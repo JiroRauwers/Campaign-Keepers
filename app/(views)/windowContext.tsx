@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import React, {
   createContext,
   useContext,
@@ -8,12 +9,16 @@ import React, {
   ReactNode,
   useMemo,
 } from "react";
+import { concat, randomString } from "remeda";
 
 /**
  * Window size is the min/max size of width of the window in pixels.
  */
 
-const DEFAULT_WINDOW_SIZE = { min: 300, max: 1000 };
+const DEFAULT_WINDOW_SIZE = { min: 600, max: 1000 };
+const WINDOW_MARGIN = 40;
+const LOCAL_STORAGE_KEY = "openWindows";
+
 interface WindowSize {
   min: number;
   max: number;
@@ -42,12 +47,12 @@ interface WindowContextType {
   windows: ManagedWindow[];
   openWindows: OpenWindow[];
   toggleWindow: (window: ManagedWindow) => void;
+  addWindow: (window: ManagedWindow) => void;
   getOpenWindows: ManagedWindow[];
+  updateWindowTimestamp: (windowId: string) => void;
 }
 
 const WindowContext = createContext<WindowContextType | undefined>(undefined);
-
-const LOCAL_STORAGE_OPEN_WINDOWS_KEY = "openWindows";
 
 export const WindowProvider: React.FC<{
   children: ReactNode;
@@ -64,32 +69,6 @@ export const WindowProvider: React.FC<{
     [mainWindowId]
   );
 
-  const [openWindows, setOpenWindows] = useState<OpenWindow[]>(() => {
-    let openWindows: OpenWindow[] = JSON.parse(
-      localStorage.getItem(LOCAL_STORAGE_OPEN_WINDOWS_KEY) || "[]"
-    );
-    if (!Array.isArray(openWindows)) {
-      openWindows = [];
-    }
-    if (!openWindows.find((window) => window.id === mainWindowId)) {
-      openWindows.push({ id: mainWindowId, timestamp: Date.now() });
-    }
-    return openWindows;
-  });
-
-  useEffect(() => {
-    // remove any duplicates
-    const uniqueOpenWindows = openWindows.filter(
-      (window, index, self) =>
-        index === self.findIndex((t) => t.id === window.id)
-    );
-
-    localStorage.setItem(
-      LOCAL_STORAGE_OPEN_WINDOWS_KEY,
-      JSON.stringify(uniqueOpenWindows)
-    );
-  }, [openWindows]);
-
   const [windows, setWindows] = useState<ManagedWindow[]>([
     {
       id: "1",
@@ -98,57 +77,127 @@ export const WindowProvider: React.FC<{
       size: DEFAULT_WINDOW_SIZE,
       data: {},
     },
+    {
+      id: "2",
+      title: "sample window 2",
+      type: WindowType.Floating,
+      size: DEFAULT_WINDOW_SIZE,
+      data: {},
+    },
   ]);
 
-  useEffect(() => {
-    console.log("mainWindow", mainWindow);
-  }, [mainWindow]);
+  const [openWindows, setOpenWindows] = useState<OpenWindow[]>(() => {
+    const stored = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || "[]");
+    const valid = Array.isArray(stored) ? stored : [];
+    return valid.find((w) => w.id === mainWindowId)
+      ? valid
+      : [...valid, { id: mainWindowId, timestamp: Date.now() }];
+  });
 
+  // Save to localStorage whenever openWindows changes
   useEffect(() => {
-    console.log("windows", windows);
-  }, [windows]);
-
-  useEffect(() => {
-    console.log("openWindows", openWindows);
+    const unique = openWindows.filter(
+      (w, i, self) => i === self.findIndex((t) => t.id === w.id)
+    );
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(unique));
   }, [openWindows]);
 
   const getOpenWindows = useMemo(() => {
     const allWindows = [mainWindow, ...windows];
-
     return openWindows
-      .map((openWindow) =>
-        allWindows.find((window) => window.id === openWindow.id)
+      .map((open) => allWindows.find((w) => w.id === open.id))
+      .filter((w): w is ManagedWindow => w !== undefined);
+  }, [openWindows, windows, mainWindow]);
+
+  const calculateTotalWidth = (windowList: ManagedWindow[]) =>
+    windowList.reduce((acc, w) => acc + w.size.min, 0);
+
+  const closeWindowsUntilFit = (
+    currentWindows: OpenWindow[],
+    totalNeeded: number,
+    newWindowId?: string
+  ) => {
+    let sortedWindows = [...currentWindows]
+      .sort((a, b) => a.timestamp - b.timestamp)
+      .filter((w) => w.id !== mainWindow.id);
+
+    let updatedWindows = [...currentWindows];
+
+    while (
+      totalNeeded > window.innerWidth - WINDOW_MARGIN &&
+      sortedWindows.length > 0
+    ) {
+      const oldest = sortedWindows.shift();
+      if (!oldest) break;
+      updatedWindows = updatedWindows.filter((w) => w.id !== oldest.id);
+
+      const remainingWindows = getOpenWindows.filter((w) =>
+        updatedWindows.some((ow) => ow.id === w.id)
+      );
+
+      totalNeeded =
+        calculateTotalWidth(remainingWindows) +
+        (newWindowId ? DEFAULT_WINDOW_SIZE.min : 0);
+    }
+
+    return updatedWindows;
+  };
+
+  const toggleWindow = (targetWindow: ManagedWindow) => {
+    const isOpen = openWindows.find((w) => w.id === targetWindow.id);
+
+    if (isOpen) {
+      setOpenWindows(openWindows.filter((w) => w.id !== targetWindow.id));
+      return;
+    }
+
+    const totalNeeded =
+      calculateTotalWidth(getOpenWindows) + targetWindow.size.min;
+
+    if (totalNeeded <= window.innerWidth - WINDOW_MARGIN) {
+      setOpenWindows([
+        ...openWindows,
+        { id: targetWindow.id, timestamp: Date.now() },
+      ]);
+    } else {
+      const updatedWindows = closeWindowsUntilFit(
+        openWindows,
+        totalNeeded,
+        targetWindow.id
+      );
+      setOpenWindows([
+        ...updatedWindows,
+        { id: targetWindow.id, timestamp: Date.now() },
+      ]);
+    }
+  };
+
+  const addWindow = (newWindow: ManagedWindow) => {
+    setWindows(concat([newWindow]));
+    toggleWindow(newWindow);
+  };
+
+  const updateWindowTimestamp = (windowId: string) => {
+    setOpenWindows(
+      openWindows.map((w) =>
+        w.id === windowId ? { ...w, timestamp: Date.now() } : w
       )
-      .filter((window) => window !== undefined) as ManagedWindow[];
-  }, [openWindows, windows]);
-
-  const canOpenWindow = (_window: ManagedWindow) => {
-    if (!window) return false;
-
-    return (
-      !openWindows.find((openWindow) => openWindow.id === _window.id) &&
-      openWindows.reduce(
-        (acc, openWindow) =>
-          acc + getOpenWindows.find((w) => w.id === openWindow.id)!.size.min,
-        0
-      ) +
-        _window.size.min <=
-        window.innerWidth
     );
   };
 
-  const toggleWindow = (_window: ManagedWindow) => {
-    if (canOpenWindow(_window)) {
-      setOpenWindows([
-        ...openWindows,
-        { id: _window.id, timestamp: Date.now() },
-      ]);
-    } else if (openWindows.find((openWindow) => openWindow.id === _window.id)) {
-      setOpenWindows(
-        openWindows.filter((openWindow) => openWindow.id !== _window.id)
-      );
-    }
-  };
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      const totalNeeded = calculateTotalWidth(getOpenWindows);
+      if (totalNeeded > window.innerWidth - WINDOW_MARGIN) {
+        const updatedWindows = closeWindowsUntilFit(openWindows, totalNeeded);
+        setOpenWindows(updatedWindows);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [windows, openWindows, getOpenWindows, mainWindow]);
 
   return (
     <WindowContext.Provider
@@ -158,6 +207,8 @@ export const WindowProvider: React.FC<{
         openWindows,
         toggleWindow,
         getOpenWindows,
+        updateWindowTimestamp,
+        addWindow,
       }}
     >
       {children}
@@ -167,8 +218,34 @@ export const WindowProvider: React.FC<{
 
 export const useWindowContext = (): WindowContextType => {
   const context = useContext(WindowContext);
-  if (context === undefined) {
+  if (!context)
     throw new Error("useWindowContext must be used within a WindowProvider");
-  }
   return context;
+};
+
+export const CreateWindow = ({
+  id,
+  title,
+  type,
+}: {
+  id?: string;
+  title: string;
+  type: WindowType;
+}) => {
+  const { addWindow } = useWindowContext();
+  return (
+    <Button
+      onClick={() =>
+        addWindow({
+          id: id ?? randomString(5),
+          title,
+          type,
+          size: DEFAULT_WINDOW_SIZE,
+          data: {},
+        })
+      }
+    >
+      create window {title}
+    </Button>
+  );
 };

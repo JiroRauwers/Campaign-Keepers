@@ -174,7 +174,10 @@ function IconContainer({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => toggleWindow(window)}
-      className="aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center relative"
+      className={cn(
+        "aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center relative"
+        // isOpen && "border-2 border-primary"
+      )}
     >
       <AnimatePresence>
         {hovered && (
@@ -190,7 +193,7 @@ function IconContainer({
       </AnimatePresence>
       {isOpen && (
         <motion.div
-          className="bg-red-500 "
+          className="bg-primary size-1.5 rounded-full -bottom-2.5 absolute"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
