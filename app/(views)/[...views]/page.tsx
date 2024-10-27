@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { CreateWindow, useWindowContext, WindowType } from "../windowContext";
+import { CreateWindow, useWindowContext, WindowMode } from "../windowContext";
 import { randomUUID } from "crypto";
 
 const titles = {
@@ -36,8 +36,11 @@ export default function Page() {
         <Button asChild>
           <Link href="/test/world">Go to /test/world</Link>
         </Button>
+        <Button asChild>
+          <Link href="/test/user">Go to /test/user</Link>
+        </Button>
 
-        <CreateWindow title="test" type={WindowType.Grounded} />
+        <CreateWindow title="test" type={WindowMode.Grounded} />
 
         <div>current path: {pathname}</div>
 

@@ -24,7 +24,7 @@ interface WindowSize {
   max: number;
 }
 
-export enum WindowType {
+export enum WindowMode {
   Floating,
   Grounded,
 }
@@ -32,7 +32,7 @@ export enum WindowType {
 export interface ManagedWindow {
   id: string;
   title: string;
-  type: WindowType;
+  type: WindowMode;
   size: WindowSize;
   data: any;
 }
@@ -62,7 +62,7 @@ export const WindowProvider: React.FC<{
     () => ({
       id: mainWindowId,
       title: `Main Window ${mainWindowId}`,
-      type: WindowType.Grounded,
+      type: WindowMode.Grounded,
       size: DEFAULT_WINDOW_SIZE,
       data: {},
     }),
@@ -73,14 +73,14 @@ export const WindowProvider: React.FC<{
     {
       id: "1",
       title: "sample window 1",
-      type: WindowType.Floating,
+      type: WindowMode.Floating,
       size: DEFAULT_WINDOW_SIZE,
       data: {},
     },
     {
       id: "2",
       title: "sample window 2",
-      type: WindowType.Floating,
+      type: WindowMode.Floating,
       size: DEFAULT_WINDOW_SIZE,
       data: {},
     },
@@ -230,7 +230,7 @@ export const CreateWindow = ({
 }: {
   id?: string;
   title: string;
-  type: WindowType;
+  type: WindowMode;
 }) => {
   const { addWindow } = useWindowContext();
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useWindowContext, WindowType } from "./windowContext";
+import { useWindowContext, WindowMode } from "./windowContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { useMemo } from "react";
 
@@ -42,7 +42,7 @@ export default function DisplayWindows({
             }}
             className={cn(
               "rounded-md p-2 w-full bg-white overflow-auto dark:bg-neutral-800/10",
-              window.type === WindowType.Floating &&
+              window.type === WindowMode.Floating &&
                 "border dark:border-neutral-800 border-gray-200 bg-gray-100/50 dark:bg-neutral-800/50"
             )}
           >
