@@ -1,8 +1,12 @@
 import { createContext, useEffect, useMemo, useReducer, useState } from "react";
-import { Window, WindowContext, WindowStateMode } from "./types";
+import {
+  IWindow,
+  ISliceInitialState,
+  WindowStateModeEnum,
+} from "../../lib/features/wm/types";
 import { WindowReducer } from "./reducer";
 
-const windowContext = createContext<WindowContext | undefined>(undefined);
+const windowContext = createContext<ISliceInitialState | undefined>(undefined);
 const LOCAL_STORAGE_KEY = "WinManager-Storage";
 
 export default function WinManagerContextProvider({
@@ -27,7 +31,7 @@ export default function WinManagerContextProvider({
   );
 
   const openWindows = useMemo(() => {
-    return windows.filter((w) => w.state.mode === WindowStateMode.Open);
+    return windows.filter((w) => w.state.mode === WindowStateModeEnum.Open);
   }, [windows]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
-import { Window, WindowAction } from "./types";
+import { IWindow, WindowAction } from "../../lib/features/wm/types";
 
-export function WindowReducer(state: Window[], action: WindowAction) {
+export function WindowReducer(state: IWindow[], action: WindowAction) {
   switch (action.type) {
     case "add":
       return [...state, action.window];
