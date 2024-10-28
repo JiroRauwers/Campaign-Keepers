@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start"
   },
@@ -37,19 +37,19 @@
     "geist": "^1.2.1",
     "lucide-react": "^0.436.0",
     "mini-svg-data-uri": "^1.4.4",
-    "next": "latest",
+    "next": "15.0.1",
     "next-themes": "^0.3.0",
     "prettier": "^3.3.3",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "19.0.0-rc-69d4b800-20241021",
+    "react-dom": "19.0.0-rc-69d4b800-20241021",
     "remeda": "^2.15.0",
     "server-only": "^0.0.1",
     "sonner": "^1.5.0"
   },
   "devDependencies": {
     "@types/node": "20.10.6",
-    "@types/react": "18.2.46",
-    "@types/react-dom": "18.2.18",
+    "@types/react": "npm:types-react@19.0.0-rc.1",
+    "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1",
     "postcss": "8.4.33",
     "supabase": "^1.204.3",
     "tailwind-merge": "^2.5.3",
@@ -57,5 +57,11 @@
     "tailwindcss-animate": "^1.0.7",
     "typescript": "5.3.3"
   },
-  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a"
+  "packageManager": "pnpm@9.4.0+sha512.f549b8a52c9d2b8536762f99c0722205efc5af913e77835dbccc3b0b0b2ca9e7dc8022b78062c17291c48e88749c70ce88eb5a74f1fa8c4bf5e18bb46c8bd83a",
+  "pnpm": {
+    "overrides": {
+      "@types/react": "npm:types-react@19.0.0-rc.1",
+      "@types/react-dom": "npm:types-react-dom@19.0.0-rc.1"
+    }
+  }
 }
