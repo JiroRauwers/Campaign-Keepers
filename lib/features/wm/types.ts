@@ -79,6 +79,7 @@ export const DEFAULT_WINDOW_SETTINGS: IWindowSettings = {
   size: DEFAULT_WINDOW_SIZE,
   position: { direction: WindowDirectionEnum.Left, priority: 0 },
 };
+
 export const DEFAULT_WINDOW_STATE: _INonStackedWindowState = {
   mode: WindowStateModeEnum.Open,
   timestamp: Date.now(),

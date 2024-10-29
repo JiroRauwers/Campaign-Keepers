@@ -3,10 +3,14 @@ import { useAppDispatch, useAppSelector } from "./store";
 import { clone, filter, find, isDeepEqual, mergeDeep, pipe } from "remeda";
 import {
   IWindow,
+  TWindowState,
   WindowStateModeEnum,
   WindowTypeEnum,
 } from "@/lib/features/wm/types";
-import { setNavigationWindow } from "@/lib/features/wm/wmSlice";
+import {
+  changeNavigationWindow,
+  setNavigationWindow,
+} from "@/lib/features/wm/wmSlice";
 import { deepEqual } from "assert";
 
 export const useWm = () => {
@@ -35,10 +39,7 @@ export const useWm = () => {
   };
 };
 
-export const useWmNavWindow = (
-  data?: any,
-  extra?: Partial<Omit<IWindow, "data">>
-) => {
+export const useWmNavWindow = (_data?: any, _state?: TWindowState) => {
   const { windows } = useWm();
 
   const dispatch = useAppDispatch();
@@ -48,24 +49,20 @@ export const useWmNavWindow = (
     [windows]
   );
 
-  const dataRef = useRef(data);
-  const extraRef = useRef(extra);
+  const data = useMemo(() => _data ?? {}, [_data]);
+  const state = useMemo(() => _state, [_state]);
 
   useEffect(() => {
-    if (!navigationWindow) return;
+    function updateNavigationWindow() {
+      dispatch(changeNavigationWindow({ state, data }));
+    }
 
-    dispatch(
-      setNavigationWindow({
-        ...extraRef.current,
-        state: {
-          mode: WindowStateModeEnum.Open,
-          timestamp: Date.now(),
-          ...extraRef.current?.state,
-        },
-        data: dataRef.current,
-      })
-    );
-  }, [dataRef.current, extraRef.current]);
+    if (!navigationWindow) return updateNavigationWindow();
+    if (isDeepEqual(data, navigationWindow.data))
+      return updateNavigationWindow();
+    if (isDeepEqual(state?.mode, navigationWindow.state.mode))
+      return updateNavigationWindow();
+  }, [data, state]);
 
   return navigationWindow;
 };

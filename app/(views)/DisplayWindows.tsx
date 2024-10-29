@@ -17,9 +17,9 @@ export default function DisplayWindows({
   const { openWindows } = useWm();
   const [maxHeight, setMaxHeight] = useState(window.innerHeight - 48 - 48 - 8);
 
-  useEventListener("resize", () => {
-    setMaxHeight(window.innerHeight - 48 - 48 - 8);
-  });
+  // useEventListener("resize", () => {
+  //   setMaxHeight(window.innerHeight - 48 - 48 - 8);
+  // });
 
   return (
     <div className="flex justify-around p-4 gap-4 flex-1">

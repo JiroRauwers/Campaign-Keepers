@@ -8,36 +8,31 @@ import { randomUUID } from "crypto";
 import { useWmNavWindow } from "@/hooks/useWm";
 import assert from "assert";
 import { useAppDispatch } from "@/hooks/store";
-import { updateWindow } from "@/lib/features/wm/wmSlice";
-
-const titles = {
-  home: "Home",
-  world: "World",
-  test: "Test",
-};
+import { updateWindowData } from "@/lib/features/wm/wmSlice";
 
 export default function Page() {
   const pathname = usePathname();
   const navigationWindow = useWmNavWindow({ title: pathname });
-  assert(navigationWindow, "navigationWindow is required");
 
   const dispatch = useAppDispatch();
   const counter = useMemo(
-    () => navigationWindow.data.counter ?? 0,
-    [navigationWindow.data.counter]
+    () => navigationWindow?.data.counter ?? 0,
+    [navigationWindow?.data.counter]
   );
+
+  if (!navigationWindow) return <div>Loading...</div>;
 
   return (
     <>
       <h1 className="text-3xl sticky top-0">
-        {navigationWindow.data.title ?? "Unknown"}
+        {navigationWindow?.data.title ?? "Unknown"}
       </h1>
       <div className="flex flex-col gap-4">
         <Button
           onClick={() =>
             dispatch(
-              updateWindow({
-                id: navigationWindow.id,
+              updateWindowData({
+                id: navigationWindow?.id,
                 data: { counter: counter + 1 },
               })
             )
