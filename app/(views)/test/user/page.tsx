@@ -1,13 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useWmNavWindow } from "@/hooks/useWm";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { CreateWindow, WindowMode } from "../../windowContext";
 
 export default function Page() {
   const pathname = usePathname();
+  const navigationWindow = useWmNavWindow({ title: "user Screen" });
 
   return (
     <>
@@ -20,7 +20,11 @@ export default function Page() {
           <Link href="/test/world">Go to /test/world</Link>
         </Button>
 
-        <CreateWindow title="sample user window" type={WindowMode.Floating} />
+        {/* <CreateWindow title="sample user window" type={WindowMode.Floating} /> */}
+
+        <pre>
+          <code>{JSON.stringify(navigationWindow, null, 2)}</code>
+        </pre>
 
         <div>current path: {pathname}</div>
       </div>

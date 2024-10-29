@@ -1,9 +1,11 @@
 "use client";
 
+import { useEventListener } from "@/hooks/useEventListener";
+import { useWm, useWmNavWindow } from "@/hooks/useWm";
+import { WindowModeEnum, WindowTypeEnum } from "@/lib/features/wm/types";
 import { cn } from "@/lib/utils";
-import { useWindowContext, WindowMode } from "./windowContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { useMemo } from "react";
+import { useState } from "react";
 
 interface DisplayWindowsProps {
   mainWindowChild: React.ReactNode;
@@ -12,16 +14,17 @@ interface DisplayWindowsProps {
 export default function DisplayWindows({
   mainWindowChild,
 }: DisplayWindowsProps) {
-  const { getOpenWindows } = useWindowContext();
+  const { openWindows } = useWm();
+  const [maxHeight, setMaxHeight] = useState(window.innerHeight - 48 - 48 - 8);
 
-  const maxHeight = useMemo(() => {
-    return window.innerHeight - 48 - 48 - 8;
-  }, []);
+  useEventListener("resize", () => {
+    setMaxHeight(window.innerHeight - 48 - 48 - 8);
+  });
 
   return (
     <div className="flex justify-around p-4 gap-4 flex-1">
       <AnimatePresence mode="popLayout" presenceAffectsLayout>
-        {getOpenWindows.map((window) => (
+        {openWindows.map((window) => (
           <motion.div
             key={window.id}
             layoutId={window.id}
@@ -36,17 +39,19 @@ export default function DisplayWindows({
             }}
             exit={{ opacity: 0, y: 10 }}
             style={{
-              minWidth: window.size.min,
-              maxWidth: window.size.max,
+              minWidth: window.settings.size.min,
+              maxWidth: window.settings.size.max,
               maxHeight: maxHeight,
             }}
             className={cn(
               "rounded-md p-2 w-full bg-white overflow-auto dark:bg-neutral-800/10",
-              window.type === WindowMode.Floating &&
+              window.settings.mode === WindowModeEnum.Floating &&
                 "border dark:border-neutral-800 border-gray-200 bg-gray-100/50 dark:bg-neutral-800/50"
             )}
           >
-            {window.id === "main" ? mainWindowChild : window.title}
+            {window.type === WindowTypeEnum.Navigation
+              ? mainWindowChild
+              : window.data.title}
           </motion.div>
         ))}
       </AnimatePresence>

@@ -3,9 +3,12 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { CreateWindow, useWindowContext, WindowMode } from "../windowContext";
+import { useMemo, useState } from "react";
 import { randomUUID } from "crypto";
+import { useWmNavWindow } from "@/hooks/useWm";
+import assert from "assert";
+import { useAppDispatch } from "@/hooks/store";
+import { updateWindow } from "@/lib/features/wm/wmSlice";
 
 const titles = {
   home: "Home",
@@ -15,19 +18,31 @@ const titles = {
 
 export default function Page() {
   const pathname = usePathname();
+  const navigationWindow = useWmNavWindow({ title: pathname });
+  assert(navigationWindow, "navigationWindow is required");
 
-  const [counter, setCounter] = useState(0);
-  console.log({ path: pathname.split("/") });
-
-  const { addWindow, windows } = useWindowContext();
+  const dispatch = useAppDispatch();
+  const counter = useMemo(
+    () => navigationWindow.data.counter ?? 0,
+    [navigationWindow.data.counter]
+  );
 
   return (
     <>
       <h1 className="text-3xl sticky top-0">
-        {titles[pathname.split("/").at(-1) as keyof typeof titles] ?? "Unknown"}
+        {navigationWindow.data.title ?? "Unknown"}
       </h1>
       <div className="flex flex-col gap-4">
-        <Button onClick={() => setCounter(counter + 1)}>
+        <Button
+          onClick={() =>
+            dispatch(
+              updateWindow({
+                id: navigationWindow.id,
+                data: { counter: counter + 1 },
+              })
+            )
+          }
+        >
           counter : {counter}
         </Button>
         <Button asChild>
@@ -40,7 +55,7 @@ export default function Page() {
           <Link href="/test/user">Go to /test/user</Link>
         </Button>
 
-        <CreateWindow title="test" type={WindowMode.Grounded} />
+        {/* <CreateWindow title="test" type={WindowMode.Grounded} /> */}
 
         <div>current path: {pathname}</div>
 

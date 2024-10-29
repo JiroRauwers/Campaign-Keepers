@@ -15,10 +15,16 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import Link from "next/link";
-import { useRef, useState } from "react";
-import { ManagedWindow, useWindowContext } from "./windowContext";
+import { useMemo, useRef, useState } from "react";
 import { AppWindowMac } from "lucide-react";
+import {
+  IWindow,
+  WindowStateModeEnum,
+  WindowTypeEnum,
+} from "@/lib/features/wm/types";
+import { useWm } from "@/hooks/useWm";
+import { useAppDispatch } from "@/hooks/store";
+import { toggleWindowMode } from "@/lib/features/wm/wmSlice";
 
 export const WindowManagerDock = () => {
   return (
@@ -31,7 +37,7 @@ export const WindowManagerDock = () => {
 
 const FloatingDockMobile = ({ className }: { className?: string }) => {
   const [open, setOpen] = useState(false);
-  const { toggleWindow, windows, mainWindow } = useWindowContext();
+  const { windows } = useWm();
 
   return (
     <div className={cn("relative block md:hidden", className)}>
@@ -41,7 +47,7 @@ const FloatingDockMobile = ({ className }: { className?: string }) => {
             layoutId="nav"
             className="absolute bottom-full mb-2 inset-x-0 flex flex-col gap-2"
           >
-            {[mainWindow, ...windows].map((item, idx) => (
+            {windows.map((item, idx) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 10 }}
@@ -60,7 +66,7 @@ const FloatingDockMobile = ({ className }: { className?: string }) => {
               >
                 <button
                   key={item.id}
-                  onClick={() => toggleWindow(item)}
+                  // onClick={() => toggleWindow(item)}
                   className="h-10 w-10 rounded-full bg-gray-50 dark:bg-neutral-900 flex items-center justify-center"
                 >
                   <div className="h-4 w-4">
@@ -84,32 +90,18 @@ const FloatingDockMobile = ({ className }: { className?: string }) => {
 
 const FloatingDockDesktop = ({ className }: { className?: string }) => {
   let mouseX = useMotionValue(Infinity);
-  const { windows, mainWindow, openWindows } = useWindowContext();
+  const { windows } = useWm();
 
   return (
     <motion.div
-      onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
         "mx-auto hidden md:flex h-16 gap-4 items-end  rounded-2xl bg-gray-50 dark:bg-neutral-900 px-4 pb-3",
         className
       )}
     >
-      <IconContainer
-        mouseX={mouseX}
-        isOpen={openWindows.some(
-          (openWindow) => openWindow.id === mainWindow.id
-        )}
-        key={mainWindow.id}
-        window={mainWindow}
-      />
-      {windows.map((item) => (
-        <IconContainer
-          mouseX={mouseX}
-          isOpen={openWindows.some((openWindow) => openWindow.id === item.id)}
-          key={item.id}
-          window={item}
-        />
+      {windows.map((win) => (
+        <IconContainer mouseX={mouseX} key={win.id} window={win} />
       ))}
     </motion.div>
   );
@@ -117,12 +109,10 @@ const FloatingDockDesktop = ({ className }: { className?: string }) => {
 
 function IconContainer({
   mouseX,
-  isOpen,
   window,
 }: {
   mouseX: MotionValue;
-  window: ManagedWindow;
-  isOpen: boolean;
+  window: IWindow;
 }) {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -166,14 +156,15 @@ function IconContainer({
 
   const [hovered, setHovered] = useState(false);
 
-  const { toggleWindow } = useWindowContext();
+  const dispatch = useAppDispatch();
+
   return (
     <motion.div
       ref={ref}
       style={{ width, height }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => toggleWindow(window)}
+      onClick={() => dispatch(toggleWindowMode(window))}
       className={cn(
         "aspect-square rounded-full bg-gray-200 dark:bg-neutral-800 flex items-center justify-center relative"
         // isOpen && "border-2 border-primary"
@@ -187,11 +178,11 @@ function IconContainer({
             exit={{ opacity: 0, y: 2, x: "-50%" }}
             className="px-2 py-0.5 whitespace-pre rounded-md bg-gray-100 border dark:bg-neutral-800 dark:border-neutral-900 dark:text-white border-gray-200 text-neutral-700 absolute left-1/2 -translate-x-1/2 -top-8 w-fit text-xs"
           >
-            {window.title}
+            {window.data.title}
           </motion.div>
         )}
       </AnimatePresence>
-      {isOpen && (
+      {window.state.mode === WindowStateModeEnum.Open && (
         <motion.div
           className="bg-primary size-1.5 rounded-full -bottom-2.5 absolute"
           initial={{ opacity: 0, y: 10 }}
