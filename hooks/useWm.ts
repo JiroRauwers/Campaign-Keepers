@@ -7,11 +7,6 @@ import {
   WindowStateModeEnum,
   WindowTypeEnum,
 } from "@/lib/features/wm/types";
-import {
-  changeNavigationWindow,
-  setNavigationWindow,
-} from "@/lib/features/wm/wmSlice";
-import { deepEqual } from "assert";
 
 export const useWm = () => {
   const { windows: _windows, edditMode } = useAppSelector((state) => state.wm);
