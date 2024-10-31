@@ -1,25 +1,33 @@
 "use client";
 
 import { useEventListener } from "@/hooks/useEventListener";
-import { useWm, useWmNavWindow } from "@/hooks/useWm";
+import { useWm } from "@/hooks/useWm";
+import Sheet from "@/layout/wmWindow/sheet";
 import { WindowModeEnum, WindowTypeEnum } from "@/lib/features/wm/types";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 interface DisplayWindowsProps {
   mainWindowChild: React.ReactNode;
+}
+
+function maxheightReducer(_: number, v: number) {
+  return v;
 }
 
 export default function DisplayWindows({
   mainWindowChild,
 }: DisplayWindowsProps) {
   const { openWindows } = useWm();
-  const [maxHeight, setMaxHeight] = useState(window.innerHeight - 48 - 48 - 8);
+  const [maxHeight, setMaxHeight] = useState(720);
+  useEffect(() => {
+    setMaxHeight(window?.innerHeight - 48 - 48 - 8);
+  }, []);
 
-  // useEventListener("resize", () => {
-  //   setMaxHeight(window.innerHeight - 48 - 48 - 8);
-  // });
+  useEventListener("resize", () => {
+    setMaxHeight(window?.innerHeight - 48 - 48 - 8);
+  });
 
   return (
     <div className="flex justify-around p-4 gap-4 flex-1">
@@ -52,6 +60,8 @@ export default function DisplayWindows({
             {window.type === WindowTypeEnum.Navigation
               ? mainWindowChild
               : window.data.title}
+
+            {window.type === WindowTypeEnum.Sheet && <Sheet {...window} />}
           </motion.div>
         ))}
       </AnimatePresence>

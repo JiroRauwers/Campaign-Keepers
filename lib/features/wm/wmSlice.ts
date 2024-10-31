@@ -57,15 +57,13 @@ const wmSlice = createSlice({
       assert(action.payload.type !== undefined, "Window `Type` is required");
 
       const wmWindow = CreateBaseWindow(action.payload);
-      assert(wmWindow.id !== undefined, "Window `Id` is required");
       state.windows.push(wmWindow);
     },
 
-    updateWindowData(state, action: updateWindowAction) {
-      const window = find(state.windows, (w) => w.id === action.payload.id);
+    updateWindow(state, action: updateWindowAction) {
+      let window = find(state.windows, (w) => w.id === action.payload.id);
       assert(window !== undefined, "Window not found");
-
-      window.data = action.payload.data;
+      window = Object.merge<IWindow>(window, action.payload);
     },
     closeWindow(state, action: updateWindowAction) {
       filter(state.windows, (w) => w.id !== action.payload.id);
@@ -94,7 +92,7 @@ export const {
   setEditMode,
   resetNavigationWindow,
   addWindow,
-  updateWindowData,
+  updateWindow,
   closeWindow,
   toggleWindowMode,
 } = wmSlice.actions;

@@ -8,7 +8,7 @@ import { randomUUID } from "crypto";
 import { useWmNavWindow } from "@/hooks/useWm";
 import assert from "assert";
 import { useAppDispatch } from "@/hooks/store";
-import { updateWindowData } from "@/lib/features/wm/wmSlice";
+import { updateWindow } from "@/lib/features/wm/wmSlice";
 
 export default function Page() {
   const pathname = usePathname();
@@ -31,7 +31,7 @@ export default function Page() {
         <Button
           onClick={() =>
             dispatch(
-              updateWindowData({
+              updateWindow({
                 id: navigationWindow?.id,
                 data: { counter: counter + 1 },
               })

@@ -4,6 +4,8 @@ export enum WindowTypeEnum {
   None = "none",
   Navigation = "navigation",
   Content = "content",
+  Sheet = "sheet",
+  SheetList = "sheetList",
 }
 
 export enum WindowModeEnum {

@@ -7,6 +7,7 @@ import {
   WindowStateModeEnum,
   WindowTypeEnum,
 } from "@/lib/features/wm/types";
+import { resetNavigationWindow, updateWindow } from "@/lib/features/wm/wmSlice";
 
 export const useWm = () => {
   const { windows: _windows, edditMode } = useAppSelector((state) => state.wm);
@@ -49,7 +50,8 @@ export const useWmNavWindow = (_data?: any, _state?: TWindowState) => {
 
   useEffect(() => {
     function updateNavigationWindow() {
-      dispatch(changeNavigationWindow({ state, data }));
+      dispatch(resetNavigationWindow());
+      dispatch(updateWindow({ id: "nav", data, state }));
     }
 
     if (!navigationWindow) return updateNavigationWindow();

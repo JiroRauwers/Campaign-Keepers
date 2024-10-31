@@ -7,6 +7,7 @@ import {
   WindowTypeEnum,
 } from "./types";
 import { evolve, mergeDeep } from "remeda";
+import { merge } from "@/lib/merger/mergers";
 
 export const accumulateWindowMinWidths = (windowList: IWindow[]) =>
   windowList.reduce((acc, w) => acc + w.settings.size.min, 0);
@@ -18,19 +19,14 @@ export const updateState = (window: IWindow) => {
 };
 
 export function CreateBaseWindow(window: Partial<IWindow>) {
-  return {
-    id: nanoid(),
-    type: WindowTypeEnum.None,
-    ...window,
-    data: { ...window.data },
-    state: {
-      ...DEFAULT_WINDOW_STATE,
-      ...window.state,
+  return Object.merge(
+    {
+      id: nanoid(),
+      type: WindowTypeEnum.None,
+      state: DEFAULT_WINDOW_STATE,
+      settings: DEFAULT_WINDOW_SETTINGS,
     },
-    settings: { ...DEFAULT_WINDOW_SETTINGS, ...window.settings },
-  };
+    window
+  );
 }
 
-function recursiveMerge(target: any, source: any) {
-  return mergeDeep(target, source);
-}

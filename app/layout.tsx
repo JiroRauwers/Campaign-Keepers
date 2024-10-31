@@ -3,6 +3,7 @@ import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import ReduxProvider from "./StoreProvider";
+import "@/lib/globals";
 
 export const dynamic = "force-dynamic";
 

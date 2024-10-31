@@ -1,5 +1,11 @@
-
-export type Json =
+[?25l
+    Select a project:                                                                                 
+                                                                                                      
+  >  1. plcbnpuysgyxducbrcwx [name: Campaign Keepers, org: hbmmlvmhpyhzainniqwt, region: eu-central-1]
+                                                                                                      
+                                                                                                      
+    ↑/k up • ↓/j down • / filter • q quit • ? more                                                    
+                                                                                                      [0D[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[0D[2K [0D[2K[?25h[?1002l[?1003l[?1006lexport type Json =
   | string
   | number
   | boolean
@@ -8,31 +14,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          operationName?: string
-          query?: string
-          variables?: Json
-          extensions?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       campaign_sheets: {
@@ -97,6 +78,82 @@ export type Database = {
           },
         ]
       }
+      p_configs: {
+        Row: {
+          data: Json | null
+          id: string
+          name: string
+        }
+        Insert: {
+          data?: Json | null
+          id?: string
+          name: string
+        }
+        Update: {
+          data?: Json | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      p_shared: {
+        Row: {
+          config_id: string | null
+          data: Json | null
+          id: string
+          name: string
+        }
+        Insert: {
+          config_id?: string | null
+          data?: Json | null
+          id?: string
+          name: string
+        }
+        Update: {
+          config_id?: string | null
+          data?: Json | null
+          id?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "p_shared_config_id_fkey"
+            columns: ["config_id"]
+            isOneToOne: false
+            referencedRelation: "p_configs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      p_sheets: {
+        Row: {
+          config_id: string | null
+          data: Json | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          config_id?: string | null
+          data?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          config_id?: string | null
+          data?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "p_sheets_config_id_fkey"
+            columns: ["config_id"]
+            isOneToOne: false
+            referencedRelation: "p_configs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -122,15 +179,28 @@ export type Database = {
           username?: string | null
           website?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_id_fkey"
-            columns: ["id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
+      }
+      sheet_templates: {
+        Row: {
+          created_at: string
+          data: Json | null
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          id?: number
+          name?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          id?: number
+          name?: string
+        }
+        Relationships: []
       }
       sheets: {
         Row: {
@@ -161,13 +231,6 @@ export type Database = {
           world_id?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "sheets_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "sheets_world_id_fkey"
             columns: ["world_id"]
@@ -205,7 +268,7 @@ export type Database = {
             foreignKeyName: "user_sheets_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -231,7 +294,7 @@ export type Database = {
             foreignKeyName: "user_world_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -308,7 +371,7 @@ export type Database = {
             foreignKeyName: "worlds_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -423,4 +486,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
