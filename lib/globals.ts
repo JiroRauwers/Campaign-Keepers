@@ -1,8 +1,9 @@
+import { Json } from "@/database.types";
 import { merge } from "./merger";
 
 declare global {
   interface ObjectConstructor {
-    merge<R extends Object = Object, P extends Object = Object>(
+    merge<R extends Object | Json = Object, P extends Object | Json = Object>(
       first: R,
       other: P
     ): R & P;

@@ -37,6 +37,7 @@ export default async function Signup(props: { searchParams: Promise<Message> }) 
             minLength={6}
             required
           />
+          {/* @ts-expect-error form action changes */}
           <SubmitButton formAction={signUpAction} pendingText="Signing up...">
             Sign up
           </SubmitButton>

@@ -58,6 +58,8 @@ export default async function WorldPage({
 
   const profiles = pipe(
     world.user_world,
+    // TODO: This is a hack to get around the fact that the profiles are not being returned
+    // @ts-ignore
     flatMap((uw) => uw.profiles as Tables<"profiles">[]),
     uniqueBy((p) => p.id)
     // filter((p) => p.id !== user!.id)

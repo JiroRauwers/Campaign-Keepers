@@ -35,8 +35,16 @@ export default function Page() {
                 );
               }}
             >
-              <CardHeader>{sheet.data.title ?? "NO TITLE"}</CardHeader>
-              <CardContent>{sheet.data.content}</CardContent>
+              <CardHeader>
+                {typeof sheet.data === "object" && sheet.data !== null
+                  ? ((sheet.data as { title?: string })?.title ?? "NO TITLE")
+                  : "NO TITLE"}
+              </CardHeader>
+              <CardContent>
+                {typeof sheet.data === "object" && sheet.data !== null
+                  ? (sheet.data as { content?: string })?.content
+                  : null}
+              </CardContent>
             </Card>
           </li>
         ))}
