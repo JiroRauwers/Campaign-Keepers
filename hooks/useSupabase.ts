@@ -4,17 +4,23 @@ import { createClient } from "@/utils/supabase/client";
 import { PostgrestSingleResponse, SupabaseClient } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
 
-export function useSupabase<result>(
+export function useSupabase<result, result2 extends result | null>(
   fn: (
     supabase: SupabaseClient<Database>
   ) => Promise<PostgrestSingleResponse<result>>,
-  subName?: string
+  settings: {
+    sub?: {
+      name: string;
+      table: keyof Database["public"]["Tables"];
+    };
+    initialData?: result2;
+  } = {}
 ): [PostgrestSingleResponse<result>, () => void] {
   const supabase = createClient();
 
   const [res, setRes] = useState<PostgrestSingleResponse<result>>({
     // @ts-expect-error some missunderstaning in typescript type assertions
-    data: null,
+    data: settings.initialData ?? null,
     count: null,
     status: 0,
     statusText: "",
@@ -25,22 +31,26 @@ export function useSupabase<result>(
 
   useEffect(() => {
     async function query() {
+      const res1 = supabase
+        .from("p_configs")
+        .update({ data: { name: "New Name" }, id: "1" });
       const res = await fn(supabase);
       setRes(res);
     }
     query();
   }, [_reexecute]);
 
-  if (subName) {
-    supabase.channel(subName).on(
+  if (settings.sub) {
+    supabase.channel(settings.sub.name).on(
       "postgres_changes",
       {
         event: "*",
         schema: "public",
-        table: "p_sheets",
+        table: settings.sub.table,
       },
       (payload) => {
-        console.log(payload);
+        // TODO: handle payload
+        reexecute();
       }
     );
   }

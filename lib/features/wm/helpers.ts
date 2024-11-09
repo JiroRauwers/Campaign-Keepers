@@ -27,6 +27,6 @@ export function CreateBaseWindow(window: Partial<IWindow>) {
       settings: DEFAULT_WINDOW_SETTINGS,
     },
     window
-  );
+  ) as IWindow;
 }
 

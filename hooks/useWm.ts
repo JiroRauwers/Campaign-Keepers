@@ -63,3 +63,13 @@ export const useWmNavWindow = (_data?: any, _state?: TWindowState) => {
 
   return navigationWindow;
 };
+
+export const useWmWindow = (id: string | null) => {
+  const { windows } = useWm();
+  const wmWindow = useMemo(
+    () => find(windows, (window) => window.id === id),
+    [windows, id]
+  );
+
+  return { wmWindow };
+};

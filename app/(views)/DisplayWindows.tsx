@@ -1,6 +1,7 @@
 "use client";
 
 import { useEventListener } from "@/hooks/useEventListener";
+import { SheetProvider } from "@/hooks/useSheet/SheetContext";
 import { useWm } from "@/hooks/useWm";
 import Sheet from "@/layout/wmWindow/sheet";
 import { WindowModeEnum, WindowTypeEnum } from "@/lib/features/wm/types";
@@ -61,7 +62,11 @@ export default function DisplayWindows({
               ? mainWindowChild
               : window.data.title}
 
-            {window.type === WindowTypeEnum.Sheet && <Sheet {...window} />}
+            {window.type === WindowTypeEnum.Sheet && (
+              <SheetProvider id={window.id}>
+                <Sheet {...window} />
+              </SheetProvider>
+            )}
           </motion.div>
         ))}
       </AnimatePresence>

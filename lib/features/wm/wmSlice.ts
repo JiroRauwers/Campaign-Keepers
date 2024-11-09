@@ -11,6 +11,7 @@ import { filter, find, pipe } from "remeda";
 import { OnlyRequire } from "@/lib/types";
 import assert from "assert";
 import { CreateBaseWindow, updateState } from "./helpers";
+import { createClient } from "@/utils/supabase/client";
 
 const initialState: ISliceInitialState = {
   windows: [
@@ -84,6 +85,11 @@ const wmSlice = createSlice({
               : WindowStateModeEnum.Open;
         }
       );
+    },
+    syncDatabase(state) {
+      const supabase = createClient();
+
+      console.log("syncDatabase");
     },
   },
 });
