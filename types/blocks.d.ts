@@ -1,14 +1,22 @@
 import { CSSProperties } from "react";
 
+/** Base type for all block components */
 type BaseBlockType = {
   id: string;
-  type: string;
+  type: "group" | "cardGroup" | "dots" | "checkbox";
+  /** Label to display for the block */
   label?: string;
+  /** Path for accessing block data */
   path?: string;
+  /** Path for storing block data */
   dataPath?: string;
+  /** Additional CSS classes */
   className?: string;
+  /** Inline styles for the block */
   style?: CSSProperties;
+  /** Styles specific to the label */
   labelStyle?: CSSProperties;
+  /** Whether the block is in read-only mode */
   readOnly?: boolean;
 };
 
