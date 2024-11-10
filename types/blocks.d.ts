@@ -12,14 +12,17 @@ type BaseBlockType = {
   readOnly?: boolean;
 };
 
-type GroupBlockType = BaseBlockType & {
-  type: "group";
+/** Interface for block types that can contain children */
+interface GroupBase {
   children?: BlocksType[];
+}
+
+type GroupBlockType = BaseBlockType & GroupBase & {
+  type: "group";
 };
 
-type CardGroupBlockType = BaseBlockType & {
+type CardGroupBlockType = BaseBlockType & GroupBase & {
   type: "cardGroup";
-  children?: BlocksType[];
 };
 
 type DotsBlockType = BaseBlockType & {
