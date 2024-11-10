@@ -6,6 +6,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -93,16 +94,16 @@ export default function Sheet() {
     })
   );
 
-  function handleDragEnd(event) {
+  function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
+    if (active.id !== over?.id) {
       setItems((items) => {
         const oldIndex = items[0].items.findIndex(
           (item) => item.id === active.id
         );
         const newIndex = items[0].items.findIndex(
-          (item) => item.id === over.id
+          (item) => item.id === over!.id
         );
 
         return [

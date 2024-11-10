@@ -1,12 +1,9 @@
-import { ThemeSwitcher } from "@/components/theme-switcher";
 import { GeistSans } from "geist/font/sans";
 import { ThemeProvider } from "next-themes";
-import Link from "next/link";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { NavbarSSR } from "@/components/navabar/ssr";
-
-
+import ReduxProvider from "./StoreProvider";
+import "@/lib/globals";
 
 export const dynamic = "force-dynamic";
 
@@ -30,24 +27,26 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
       <body className="bg-background text-foreground min-h-screen flex flex-col">
-        <div id="modal-root" />
-        <Toaster />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {/* <NavbarSSR /> */}
-          {children}
-          {modal}
-          {/* <footer className="w-full backdrop-blur-sm flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
+        <ReduxProvider>
+          <div id="modal-root" />
+          <Toaster />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {/* <NavbarSSR /> */}
+            {children}
+            {modal}
+            {/* <footer className="w-full backdrop-blur-sm flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
             <p>Powered by </p>
             <Link href="https://www.campaignkeeper.com">Campaign Keepers</Link>
             <ThemeSwitcher />
           </footer> */}
-          {/* <StarField /> */}
-        </ThemeProvider>
+            {/* <StarField /> */}
+          </ThemeProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

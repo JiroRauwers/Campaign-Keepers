@@ -3,7 +3,7 @@ import { type NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
  
 async function getFlags(request: NextRequest) {
-  const overrideCookie = cookies().get('vercel-flag-overrides')?.value;
+  const overrideCookie = (await cookies()).get('vercel-flag-overrides')?.value;
   const overrides = overrideCookie
     ? await decrypt<FlagOverridesType>(overrideCookie)
     : {};

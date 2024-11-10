@@ -47,11 +47,17 @@ interface CampaignDashboardProps {
   npcs: NPC[];
 }
 
-export default async function CampaignPage({
-  params: { campaign_id },
-}: {
-  params: { campaign_id: string };
-}) {
+export default async function CampaignPage(
+  props: {
+    params: Promise<{ campaign_id: string }>;
+  }
+) {
+  const params = await props.params;
+
+  const {
+    campaign_id
+  } = params;
+
   // Define sampleData within the component
   const sampleData: CampaignDashboardProps = {
     campaignName: "The Crystal Prophecy",

@@ -16,9 +16,9 @@ import {
 } from "remeda";
 import { Tables } from "@/database.types";
 import { FloatingSessionViewer } from "@/components/FloatingSessionViewer";
-import { assert } from "console";
 import { notFound } from "next/navigation";
 import { PageBase } from "@/components/PageBase";
+import assert from "assert";
 
 export async function generateMetadata({
   params,
@@ -42,6 +42,10 @@ export default async function WorldPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const test = supabase
+    .from("worlds")
+    .select("*, campaigns(*), user_world(*, profiles(*)), sheets(*)")
+    .single();
   const { data: world, error: worldError } = await supabase
     .from("worlds")
     .select("*, campaigns(*), user_world(*, profiles(*)), sheets(*)")
@@ -54,6 +58,8 @@ export default async function WorldPage({
 
   const profiles = pipe(
     world.user_world,
+    // TODO: This is a hack to get around the fact that the profiles are not being returned
+    // @ts-ignore
     flatMap((uw) => uw.profiles as Tables<"profiles">[]),
     uniqueBy((p) => p.id)
     // filter((p) => p.id !== user!.id)
