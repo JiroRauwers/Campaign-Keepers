@@ -87,7 +87,7 @@ function generateBaseData(structure: Record<string, any>): Record<string, any> {
       };
     } else if (config._type === "computed") {
       // Handle computed values - compute the formula result
-      const computedValue = computeFormula(config.formula, config.vars, result);
+      const computedValue = computeFormula(config.formula, config.vars);
       // Clamp the value between min and max if they exist
       const min = config.min ?? -Infinity;
       const max = config.max ?? Infinity;
