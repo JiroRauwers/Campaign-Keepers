@@ -1,14 +1,21 @@
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import DisplayWindows from "./DisplayWindows";
 import { WindowManagerDock } from "./floatingDock";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <DotBackgroundDemo className="min-h-screen flex flex-col max-h-screen min-w-screen max-w-screen">
-      <main className="flex flex-col flex-1 overflow-hidden w-full">
+      <main
+        className="flex flex-col flex-1 overflow-hidden w-full"
+        suppressHydrationWarning
+      >
         <DisplayWindows mainWindowChild={children} />
       </main>
       <div className="flex-none pb-4 pt-2">
         <WindowManagerDock />
+      </div>
+      <div className="absolute top-2 right-2">
+        <ThemeSwitcher />
       </div>
     </DotBackgroundDemo>
   );

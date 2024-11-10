@@ -11,9 +11,9 @@ import {
   BadgeMinus,
 } from "lucide-react";
 import {
-  Tooltip,
   TooltipContent,
   TooltipProvider,
+  TooltipRoot,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Tables } from "@/database.types";
@@ -164,7 +164,7 @@ export function CampaignsList({
                     {sessionAttendance[campaign.campaign_id].map(
                       (playerName, index) => (
                         <TooltipProvider key={index}>
-                          <Tooltip>
+                          <TooltipRoot>
                             <TooltipTrigger>
                               <Avatar className="w-6 h-6 border-2 border-primary">
                                 <AvatarFallback>{playerName[0]}</AvatarFallback>
@@ -173,7 +173,7 @@ export function CampaignsList({
                             <TooltipContent>
                               <p>{playerName} (Attending)</p>
                             </TooltipContent>
-                          </Tooltip>
+                          </TooltipRoot>
                         </TooltipProvider>
                       )
                     )}

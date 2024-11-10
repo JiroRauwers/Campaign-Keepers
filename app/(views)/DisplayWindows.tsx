@@ -31,7 +31,10 @@ export default function DisplayWindows({
   });
 
   return (
-    <div className="flex justify-around p-4 gap-4 flex-1">
+    <div
+      className="flex justify-around p-4 gap-4 flex-1"
+      suppressHydrationWarning
+    >
       <AnimatePresence mode="popLayout" presenceAffectsLayout>
         {openWindows.map((window) => (
           <motion.div
@@ -57,14 +60,15 @@ export default function DisplayWindows({
               window.settings.mode === WindowModeEnum.Floating &&
                 "border dark:border-neutral-800 border-gray-200 bg-gray-100/50 dark:bg-neutral-800/50"
             )}
+            suppressHydrationWarning
           >
             {window.type === WindowTypeEnum.Navigation
               ? mainWindowChild
-              : window.data.title}
+              : window.data?.title}
 
             {window.type === WindowTypeEnum.Sheet && (
               <SheetProvider id={window.id}>
-                <Sheet {...window} />
+                <Sheet />
               </SheetProvider>
             )}
           </motion.div>

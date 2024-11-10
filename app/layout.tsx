@@ -26,7 +26,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={GeistSans.className} suppressHydrationWarning>
-      <body className="bg-background text-foreground min-h-screen flex flex-col">
+      <body
+        className="bg-background text-foreground min-h-screen flex flex-col"
+        suppressHydrationWarning
+      >
         <ReduxProvider>
           <div id="modal-root" />
           <Toaster />

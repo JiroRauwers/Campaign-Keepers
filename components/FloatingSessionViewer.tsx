@@ -10,6 +10,8 @@ export function FloatingSessionViewer({ data }: { data: any }) {
 
   const toggleModal = () => setIsOpen(!isOpen);
 
+  if (!window) return null;
+
   return (
     <>
       <Button
