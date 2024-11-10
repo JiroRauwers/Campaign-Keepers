@@ -8,8 +8,13 @@ import {
   DotsBlockType,
   CheckboxBlockType,
 } from "@/types/blocks";
-import { useSheetValue } from "@/contexts/SheetContext";
+import {
+  useSheetConfig,
+  useSheetValue,
+  useSheetDotValue,
+} from "@/contexts/SheetContext";
 import { Dots } from "../DotsInput";
+import { ThreeStateDots } from "../ThreeStateDots";
 import { Checkbox, CheckboxState } from "../CheckboxInput";
 import {
   TooltipProvider,
@@ -17,7 +22,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "../ui/tooltip";
-import { useSheet } from "@/contexts/SheetContext";
+import { memo, useCallback, useMemo } from "react";
 
 const GroupContent = ({
   children,
@@ -33,34 +38,60 @@ const GroupContent = ({
 );
 
 const BLOCK_COMPONENTS = {
-  dots: ({ id, label, dataPath, labelStyle, readOnly }: DotsBlockType) => {
-    const { structure } = useSheet();
-    const [value, setValue] = useSheetValue(dataPath!);
+  dots: memo(
+    ({
+      id,
+      label,
+      dataPath,
+      labelStyle,
+      readOnly,
+      style,
+      dotsType = "normal",
+      hasDescription,
+      ...rest
+    }: DotsBlockType) => {
+      const MemoizedDots = useMemo(() => {
+        const DotsComponent = dotsType === "3state" ? ThreeStateDots : Dots;
+        return memo(DotsComponent);
+      }, [dotsType]);
 
-    // Get the config from the data structure
-    const config = getConfigFromPath(structure, dataPath!) || {};
-    const min = config.min ?? 0;
-    const max = config.max ?? 5;
+      const [value, setValue] = useSheetDotValue(dataPath!);
+      const config = useSheetConfig(dataPath!);
 
-    return (
-      <div className="flex items-center gap-2">
-        <Label style={labelStyle} className="font-medium w-32">
-          {label}
-        </Label>
-        <div className="flex items-center gap-2">
-          <Dots
+      return (
+        <div
+          className="flex items-center gap-2"
+          style={style}
+          data-path={dataPath}
+        >
+          <div className="flex flex-col w-32">
+            {label && (
+              <Label style={labelStyle} className="font-medium">
+                {label}
+              </Label>
+            )}
+          </div>
+          <MemoizedDots
             id={id}
             value={value}
-            min={min}
-            max={max}
+            min={config?.min ?? 0}
+            max={config?.max ?? 5}
             onChange={readOnly ? undefined : setValue}
             data-path={dataPath}
             readOnly={readOnly}
+            showUpTo={config?.showUpTo}
           />
         </div>
-      </div>
-    );
-  },
+      );
+    },
+    (prevProps, nextProps) => {
+      return (
+        prevProps.id === nextProps.id &&
+        prevProps.dataPath === nextProps.dataPath &&
+        prevProps.readOnly === nextProps.readOnly
+      );
+    }
+  ),
   group: ({
     id,
     label,
@@ -70,7 +101,7 @@ const BLOCK_COMPONENTS = {
     labelStyle,
     className,
   }: GroupBlockType) => (
-    <div className="space-y-2">
+    <div className="space-y-2" data-path={dataPath}>
       {label && dataPath !== "abilities" && (
         <Label style={labelStyle} className="font-bold text-center block">
           {label}
@@ -91,16 +122,17 @@ const BLOCK_COMPONENTS = {
     children,
     dataPath,
     style,
+
     className,
   }: CardGroupBlockType) => (
-    <Card className={className} style={style}>
+    <Card className={className} data-path={dataPath}>
       {label && (
         <CardHeader>
           <CardTitle style={labelStyle}>{label}</CardTitle>
         </CardHeader>
       )}
       <CardContent className={cn("!py-4 px-8 ", label && "!pt-0")}>
-        <GroupContent children={children} path={dataPath} />
+        <GroupContent style={style} children={children} path={dataPath} />
       </CardContent>
     </Card>
   ),
@@ -117,7 +149,7 @@ const BLOCK_COMPONENTS = {
       <TooltipProvider>
         <TooltipRoot>
           <TooltipTrigger asChild>
-            <div className="flex items-center">
+            <div className="flex items-center" data-path={dataPath}>
               <Checkbox
                 id={id}
                 state={value as CheckboxState}
@@ -135,35 +167,45 @@ const BLOCK_COMPONENTS = {
   },
 } as const;
 
-function BlockRenderer({
-  block,
-  parentPath,
-}: {
-  block:
-    | GroupBlockType
-    | CardGroupBlockType
-    | DotsBlockType
-    | CheckboxBlockType;
-  parentPath?: string;
-}) {
-  const Component = BLOCK_COMPONENTS[block.type] as React.ComponentType<
-    typeof block & { dataPath: string }
-  >;
-  if (!Component) {
-    console.warn(`No component found for block type: ${block.type}`);
-    return null;
+const BlockRenderer = memo(
+  function BlockRenderer({
+    block,
+    parentPath,
+  }: {
+    block:
+      | GroupBlockType
+      | CardGroupBlockType
+      | DotsBlockType
+      | CheckboxBlockType;
+    parentPath?: string;
+  }) {
+    const dataPath =
+      block.dataPath ||
+      (block.id
+        ? parentPath
+          ? `${parentPath}.${block.id}`
+          : block.id
+        : parentPath || "");
+
+    const config = useSheetConfig(dataPath);
+
+    const Component = BLOCK_COMPONENTS[block.type] as React.ComponentType<
+      typeof block & { dataPath: string }
+    >;
+
+    if (!Component) {
+      console.warn(`No component found for block type: ${block.type}`);
+      return null;
+    }
+
+    return <Component dataPath={dataPath} {...block} {...config} />;
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.block === nextProps.block &&
+      prevProps.parentPath === nextProps.parentPath
+    );
   }
-
-  // Calculate the dataPath based on block.dataPath or by combining parentPath and block.id
-  const dataPath =
-    block.dataPath ||
-    (block.id
-      ? parentPath
-        ? `${parentPath}.${block.id}`
-        : block.id
-      : parentPath || "");
-
-  return <Component {...block} dataPath={dataPath} />;
-}
+);
 
 export default BlockRenderer;

@@ -2,7 +2,7 @@
 
 import { FloatingSessionViewer } from "@/components/FloatingSessionViewer";
 import { useAppDispatch } from "@/hooks/store";
-import { SheetProvider } from "@/contexts/SheetContext";
+import { SheetProvider, useSheet } from "@/contexts/SheetContext";
 import BlockRenderer from "@/components/blocks";
 import { configs } from "./sheetConfig";
 
@@ -71,20 +71,29 @@ function generateBaseData(structure: Record<string, any>): Record<string, any> {
       result[key] = generateBaseData(rest);
     } else if (config._type === "value") {
       // Handle numeric values
-      result[key] = config.value ?? config.min ?? 0;
+      result[key] = {
+        value: config.value ?? config.min ?? 0,
+        description: "",
+      };
     } else if (config._type === "boolean") {
       // Handle boolean values
-      result[key] = config.checked ?? false;
+      result[key] = {
+        value: config.checked ?? false,
+      };
     } else if (config._type === "string") {
       // Handle string values
-      result[key] = config.value ?? "";
+      result[key] = {
+        value: config.value ?? "",
+      };
     } else if (config._type === "computed") {
       // Handle computed values - compute the formula result
-      const computedValue = computeFormula(config.formula, result);
+      const computedValue = computeFormula(config.formula, config.vars, result);
       // Clamp the value between min and max if they exist
       const min = config.min ?? -Infinity;
       const max = config.max ?? Infinity;
-      result[key] = Math.min(Math.max(computedValue, min), max);
+      result[key] = {
+        value: Math.min(Math.max(computedValue, min), max),
+      };
     }
   }
 
@@ -119,7 +128,7 @@ export default function Page() {
       initialData={baseData}
       structure={configs.data.dataStructure}
     >
-      <FloatingSessionViewer data={baseData} />
+      <SheetData />
       <div className="p-4 space-y-4">
         {blocksToRender.map((block) => (
           <BlockRenderer
@@ -131,4 +140,10 @@ export default function Page() {
       </div>
     </SheetProvider>
   );
+}
+
+function SheetData() {
+  const { data } = useSheet();
+
+  return <FloatingSessionViewer data={data} />;
 }

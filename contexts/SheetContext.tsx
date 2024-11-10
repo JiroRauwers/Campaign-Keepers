@@ -1,13 +1,25 @@
 "use client";
 
-import React, { createContext, useContext, useCallback, useState } from "react";
-import { useComputedValues } from "@/hooks/useComputedValues";
-import { getValueFromPath } from "@/lib/utils";
+import React, {
+  createContext,
+  useContext,
+  useCallback,
+  useState,
+  useMemo,
+  useRef,
+} from "react";
+import { useComputedValues, computeFormula } from "@/hooks/useComputedValues";
+import {
+  getValueFromPath,
+  getConfigFromPath,
+  setValueInPath,
+} from "@/lib/utils";
 
 type SheetContextType = {
   data: Record<string, any>;
   structure: Record<string, any>;
-  setValue: (path: string, value: any) => void;
+  setValue: (path: string, value: any, field?: "value" | "description") => void;
+  getConfig: (path: string) => any;
 };
 
 const SheetContext = createContext<SheetContextType | undefined>(undefined);
@@ -21,58 +33,74 @@ export function SheetProvider({
   initialData: Record<string, any>;
   structure: Record<string, any>;
 }) {
-  const [data, setData] = useState(initialData);
-
-  const handleComputedChange = useCallback((path: string, value: number) => {
-    console.log("handleComputedChange", path, value);
-
-    setData((prev) => {
-      const newData = { ...prev };
-      const parts = path.split(".");
-      let current = newData;
-
-      // Navigate to the parent object
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!(parts[i] in current)) {
-          current[parts[i]] = {};
-        }
-        current = current[parts[i]];
+  const [data, setData] = useState(() => {
+    const newData = structuredClone(initialData);
+    Object.entries(newData).forEach(([key, value]) => {
+      if (typeof value !== "object") {
+        newData[key] = { value };
       }
-
-      // Update the value
-      current[parts[parts.length - 1]] = value;
-      return newData;
     });
-  }, []);
+    return newData;
+  });
 
-  // Use the computed values hook
-  useComputedValues(data, structure, handleComputedChange);
+  const setValue = useCallback(
+    (path: string, value: any, field: "value" | "description" = "value") => {
+      setData((prev) => {
+        const newData = structuredClone(prev);
+        setValueInPath(newData, path, value, field);
+        return newData;
+      });
+    },
+    []
+  );
 
-  const setValue = useCallback((path: string, value: any) => {
-    setData((prev) => {
-      const newData = structuredClone(prev); // Use structuredClone for deep copy
-      const parts = path.split(".");
-      let current = newData;
-
-      // Navigate to the parent object
-      for (let i = 0; i < parts.length - 1; i++) {
-        if (!(parts[i] in current)) {
-          current[parts[i]] = {};
-        }
-        current = current[parts[i]];
-      }
-
-      // Update the value
-      current[parts[parts.length - 1]] = value;
-      return newData;
-    });
-  }, []);
+  const contextValue = useMemo(
+    () => ({
+      data,
+      structure,
+      setValue,
+      getConfig: (path: string) => getConfigFromPath(structure, path, data),
+    }),
+    [data, structure, setValue]
+  );
 
   return (
-    <SheetContext.Provider value={{ data, setValue, structure }}>
+    <SheetContext.Provider value={contextValue}>
       {children}
     </SheetContext.Provider>
   );
+}
+
+export function useSheetValue(path: string, hasDescription?: boolean) {
+  const { data, setValue } = useSheet();
+
+  const value = useMemo(
+    () => getValueFromPath(data, path, "value"),
+    [data, path]
+  );
+
+  const description = useMemo(
+    () =>
+      hasDescription ? getValueFromPath(data, path, "description") : undefined,
+    [data, path, hasDescription]
+  );
+
+  const setValueAndDescription = useCallback(
+    (newValue: any, newDescription?: string) => {
+      setValue(path, newValue, "value");
+      if (hasDescription && newDescription !== undefined) {
+        setValue(path, newDescription, "description");
+      }
+    },
+    [path, setValue, hasDescription]
+  );
+
+  return [value, description, setValueAndDescription] as const;
+}
+
+export function useSheetConfig(path: string) {
+  const { getConfig } = useSheet();
+  return useMemo(() => getConfig(path), [getConfig, path]);
 }
 
 export function useSheet() {
@@ -83,9 +111,20 @@ export function useSheet() {
   return context;
 }
 
-export function useSheetValue(path: string) {
+export function useSheetDotValue(path: string) {
   const { data, setValue } = useSheet();
-  // Use the helper function to get nested values
-  const value = getValueFromPath(data, path);
-  return [value, (newValue: any) => setValue(path, newValue)] as const;
+
+  const value = useMemo(
+    () => getValueFromPath(data, path, "value"),
+    [data, path]
+  );
+
+  const handleChange = useCallback(
+    (newValue: number) => {
+      setValue(path, newValue, "value");
+    },
+    [path, setValue]
+  );
+
+  return [value, handleChange] as const;
 }

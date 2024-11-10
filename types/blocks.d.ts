@@ -24,6 +24,8 @@ type CardGroupBlockType = BaseBlockType & {
 
 type DotsBlockType = BaseBlockType & {
   type: "dots";
+  dotsType?: "normal" | "3state";
+  hasDescription?: boolean;
 };
 
 type CheckboxBlockType = BaseBlockType & {
