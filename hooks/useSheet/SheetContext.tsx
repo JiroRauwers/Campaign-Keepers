@@ -2,7 +2,11 @@
 
 import { createContext, useContext } from "react";
 
-export const SheetContext = createContext<{ id: string | null }>({ id: null });
+interface SheetContextType {
+  id: string | null;
+}
+
+export const SheetContext = createContext<SheetContextType>({ id: null });
 
 export function _useSheetId() {
   return useContext(SheetContext);
