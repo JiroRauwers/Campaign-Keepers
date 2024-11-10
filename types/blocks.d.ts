@@ -35,6 +35,10 @@ type DotsBlockType = BaseBlockType & {
 
 type CheckboxBlockType = BaseBlockType & {
   type: "checkbox";
+  /** Initial checked state */
+  defaultChecked?: boolean;
+  /** Whether the checkbox can be in an indeterminate state */
+  allowIndeterminate?: boolean;
 };
 
 type BlocksType =
