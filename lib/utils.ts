@@ -11,8 +11,6 @@ export function getValueFromPath(
   path: string,
   field: "value" | "description" = "value"
 ): any {
-  console.log("getValueFromPath", { obj, path, field });
-
   const value = path.split(".").reduce((acc, part) => {
     if (!acc) return undefined;
 

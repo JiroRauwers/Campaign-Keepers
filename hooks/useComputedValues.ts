@@ -118,6 +118,7 @@ export function useComputedValues(
 
     findComputedFields(structure);
     setComputedValues(computed);
+    console.log("Found computed values:", computed);
   }, [structure]);
 
   useEffect(() => {
@@ -127,7 +128,16 @@ export function useComputedValues(
       const dependencyChanged = computed.dependencies.some((dep) => {
         const value = getValueFromPath(data, dep);
         const prevValue = getValueFromPath(prevData, dep);
-        return value !== prevValue;
+        const changed = value !== prevValue;
+
+        if (changed) {
+          console.log(`Dependency changed for ${computed.path}:`, {
+            dependency: dep,
+            oldValue: prevValue,
+            newValue: value,
+          });
+        }
+        return changed;
       });
 
       if (dependencyChanged) {
@@ -138,6 +148,13 @@ export function useComputedValues(
           data
         );
         const clampedValue = Math.min(Math.max(newValue, min), max);
+
+        console.log(`Updating computed value ${computed.path}:`, {
+          newValue,
+          clampedValue,
+          min,
+          max,
+        });
 
         if (
           !computed.path.endsWith(".min") &&

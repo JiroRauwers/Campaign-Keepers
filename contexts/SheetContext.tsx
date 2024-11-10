@@ -121,6 +121,7 @@ export function useSheetDotValue(path: string) {
 
   const handleChange = useCallback(
     (newValue: number) => {
+      console.log(`Setting value for ${path}:`, newValue);
       setValue(path, newValue, "value");
     },
     [path, setValue]

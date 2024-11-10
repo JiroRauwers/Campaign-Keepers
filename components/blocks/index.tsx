@@ -38,60 +38,48 @@ const GroupContent = ({
 );
 
 const BLOCK_COMPONENTS = {
-  dots: memo(
-    ({
-      id,
-      label,
-      dataPath,
-      labelStyle,
-      readOnly,
-      style,
-      dotsType = "normal",
-      hasDescription,
-      ...rest
-    }: DotsBlockType) => {
-      const MemoizedDots = useMemo(() => {
-        const DotsComponent = dotsType === "3state" ? ThreeStateDots : Dots;
-        return memo(DotsComponent);
-      }, [dotsType]);
+  dots: ({
+    id,
+    label,
+    dataPath,
+    labelStyle,
+    readOnly,
+    style,
+    dotsType = "normal",
+    hasDescription,
+    ...rest
+  }: DotsBlockType) => {
+    const DotsComponent = dotsType === "3state" ? ThreeStateDots : Dots;
 
-      const [value, setValue] = useSheetDotValue(dataPath!);
-      const config = useSheetConfig(dataPath!);
+    const [value, setValue] = useSheetDotValue(dataPath!);
+    const config = useSheetConfig(dataPath!);
 
-      return (
-        <div
-          className="flex items-center gap-2"
-          style={style}
-          data-path={dataPath}
-        >
-          <div className="flex flex-col w-32">
-            {label && (
-              <Label style={labelStyle} className="font-medium">
-                {label}
-              </Label>
-            )}
-          </div>
-          <MemoizedDots
-            id={id}
-            value={value}
-            min={config?.min ?? 0}
-            max={config?.max ?? 5}
-            onChange={readOnly ? undefined : setValue}
-            data-path={dataPath}
-            readOnly={readOnly}
-            showUpTo={config?.showUpTo}
-          />
+    return (
+      <div
+        className="flex items-center gap-2"
+        style={style}
+        data-path={dataPath}
+      >
+        <div className="flex flex-col w-32">
+          {label && (
+            <Label style={labelStyle} className="font-medium">
+              {label}
+            </Label>
+          )}
         </div>
-      );
-    },
-    (prevProps, nextProps) => {
-      return (
-        prevProps.id === nextProps.id &&
-        prevProps.dataPath === nextProps.dataPath &&
-        prevProps.readOnly === nextProps.readOnly
-      );
-    }
-  ),
+        <DotsComponent
+          id={id}
+          value={value}
+          min={config?.min ?? 0}
+          max={config?.max ?? 5}
+          onChange={readOnly ? undefined : setValue}
+          data-path={dataPath}
+          readOnly={readOnly}
+          showUpTo={config?.showUpTo}
+        />
+      </div>
+    );
+  },
   group: ({
     id,
     label,
@@ -188,10 +176,7 @@ const BlockRenderer = memo(
         : parentPath || "");
 
     const config = useSheetConfig(dataPath);
-
-    const Component = BLOCK_COMPONENTS[block.type] as React.ComponentType<
-      typeof block & { dataPath: string }
-    >;
+    const Component = BLOCK_COMPONENTS[block.type];
 
     if (!Component) {
       console.warn(`No component found for block type: ${block.type}`);
@@ -202,7 +187,8 @@ const BlockRenderer = memo(
   },
   (prevProps, nextProps) => {
     return (
-      prevProps.block === nextProps.block &&
+      prevProps.block.id === nextProps.block.id &&
+      prevProps.block.dataPath === nextProps.block.dataPath &&
       prevProps.parentPath === nextProps.parentPath
     );
   }

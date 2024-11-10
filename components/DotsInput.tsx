@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback } from "react";
 
 interface DotsProps {
   id: string;
@@ -73,11 +73,7 @@ export const Dots = memo(
       [value, onChange, min, max, readOnly]
     );
 
-    const normalizedValue = useMemo(
-      () =>
-        Math.min(max, Math.max(min, typeof value === "number" ? value : min)),
-      [max, min, value]
-    );
+    const normalizedValue = Math.min(max, Math.max(min, value));
 
     return (
       <div
@@ -106,8 +102,7 @@ export const Dots = memo(
       prevProps.value === nextProps.value &&
       prevProps.min === nextProps.min &&
       prevProps.max === nextProps.max &&
-      prevProps.readOnly === nextProps.readOnly &&
-      prevProps.visibleMinimum === nextProps.visibleMinimum
+      prevProps.readOnly === nextProps.readOnly
     );
   }
 );
