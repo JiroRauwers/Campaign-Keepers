@@ -24,7 +24,9 @@ type CardGroupBlockType = BaseBlockType & {
 
 type DotsBlockType = BaseBlockType & {
   type: "dots";
+  /** Type of dots display. "normal" shows standard dots, "3state" allows three different states */
   dotsType?: "normal" | "3state";
+  /** Whether the dots block should display an associated description */
   hasDescription?: boolean;
 };
 
